@@ -25,7 +25,7 @@ SECRET_KEY = '&u&_@l#0f^+k^ygad&rw(tg8e64cto1$n0s#%cblo0&r@_!vxd'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.0.12', 'luiseduardo8899.hopto.org']
 
 
 # Application definition
