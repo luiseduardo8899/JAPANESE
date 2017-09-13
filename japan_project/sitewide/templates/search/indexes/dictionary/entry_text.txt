@@ -1,0 +1,12 @@
+{% for keb in object.keb_set.all %}
+    {{ keb.text }}
+{% endfor %}
+{% for reb in object.reb_set.all %}
+    {{ reb.furigana }}
+    {{ reb.romanji }}
+{% endfor %}
+{% for sense in object.sense_set.all %}
+{% for gloss in sense.gloss_set.all %}
+    {{ gloss.text }}
+{% endfor %}
+{% endfor %}

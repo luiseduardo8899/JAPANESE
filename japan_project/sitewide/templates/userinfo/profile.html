@@ -1,0 +1,62 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+
+<div class="flex-center flex-row "> 
+<div class="md-form col-md-4">
+
+<h1> User Profile </h1>
+{% if user %}
+<h2>User Name: {{ user.username }}  </h2>
+<h3>First Name: {{ user.first_name }} </h3>
+<h3>Last Name: {{ user.last_name }} </h3>
+<p>email: {{ user.email }} </p>
+<p>active: {{ user.is_active }} </p>
+<p>last login: {{ user.last_login }} </p>
+{% else %}
+    <p>No USER FOUND!</p>
+{% endif %}
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<form action="{% url 'userinfo:update' %}" method="post">
+{% csrf_token %}
+
+	<br>Country: <br>
+    <input type="text" name="country" value="{{ profile.country }}" />
+
+    <br>
+	<br>Location: <br>
+    <input type="text" name="location" value="{{ profile.location }}" />
+    <br>
+	<br>Gender: {{profile.gender}} <br>
+   {% if profile.gender == "male" %}
+	<input type="radio" name="gender" value="male" checked > Male<br>
+  	<input type="radio" name="gender" value="female"> Female<br>
+  	<input type="radio" name="gender" value="other"> Other<br>
+   {% else %}
+	<input type="radio" name="gender" value="male" > Male<br>
+   {% if profile.gender == "female" %}
+  	<input type="radio" name="gender" value="female" checked> Female<br>
+  	<input type="radio" name="gender" value="other"> Other<br>
+   {% else %}
+  	<input type="radio" name="gender" value="female" > Female<br>
+  	<input type="radio" name="gender" value="other" checked> Other<br>
+   {% endif %}
+   {% endif %}
+
+	<br>Intro: <br>
+    <input type="textarea" name="intro" value="{{ profile.intro }}" />
+    <br><br>
+	<input type="submit" value="Update Profile" />
+
+
+</form>
+
+</div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+
+<div class="flex-center flex-row "> 
+<div class="md-form col-md-4">
+
+<h1> User Statistics </h1>
+{% if user %}
+<h2> {{ user.username }}  </h2>
+<h3> {{ user.first_name }} </h3>
+<h3> {{ user.last_name }} </h3>
+<!-- <p> {{ user.email }} </p>
+<p> {{ user.is_active }} </p>
+<p> {{ user.last_login }} </p> -->
+{% else %}
+    <p>No USER FOUND!</p>
+{% endif %}
+<hr>
+<h1>Level: {{ stats.level }}  </h1>
+<h1>Points:  {{ stats.points }} </h1>
+<hr>
+<h2>Total Vocabulary </h2>
+<h2> 320 words total</h2>
+<h4> 100 verbs</h4>
+<h4> 130 nouns</h4>
+<h4> 90 adjectives</h4>
+<hr>
+
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Payments" %}{% endblock %}
+
+{% block content %}
+
+<div class="flex-center flex-row "> 
+    <div class="flex-center md-form col-md-4">
+    <h1  class="animated fadeIn mb-2">{% trans "Payments Page" %}</h1>
+     <!-- templates/payment.html -->
+     <form action="{{ form.action }}" method="{{ form.method }}">
+         {{ form.as_p }}
+         <p><input type="submit" value="Proceed" /></p>
+     </form>
+    </div>
+</div>
+
+{% endblock %}
