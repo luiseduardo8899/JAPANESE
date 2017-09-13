@@ -1,3 +1,4 @@
+import os
 import xml.etree.ElementTree as etree
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
@@ -53,6 +54,8 @@ def update_vocab(request):
         #error_in_file = check_xml_format()
         error_in_file = False #TODO: Check XML format matches JMDICT
         if error_in_file == False :
+            #BASE_DIR = "/home/luis/TRIBU/projects/JAPANESE/"
+            #MEDIA_URL = os.path.join(BASE_DIR, uploaded_file_url)
             process_xml_file(uploaded_file_url)
             #process_csv_file(uploaded_file_url)
 

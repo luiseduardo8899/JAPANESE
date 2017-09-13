@@ -31,13 +31,58 @@ ALLOWED_HOSTS = ['192.168.0.12', 'luiseduardo8899.hopto.org']
 # Application definition
 
 INSTALLED_APPS = [
+    'premiumaccount.apps.PremiumaccountConfig',
+    'teacher.apps.TeacherConfig',
+    'userinfo.apps.UserinfoConfig',
+    'dictionary.apps.DictionaryConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #all-auth required apps 
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    #include the providers you want to enable
+    #'allauth.socialaccount.providers.google',
+    #'allauth.socialaccount.providers.baidu',
+    'allauth.socialaccount.providers.facebook',
+    'payments',
+    'haystack',
 ]
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
+    },
+}
+
+#SOLR - Haystack connection
+#<TODO>HAYSTACK_CONNECTIONS = {
+#<TODO>    "default": {
+#<TODO>        "ENGINE": "haystack.backends.solr_backend.SolrEngine",
+#<TODO>        "URL": "http://127.0.0.1:8983/solr/japan_core"
+#<TODO>    },
+#<TODO>    # ... other settings ...
+#<TODO>}
+
+SITE_ID=1 #from `allauth` setup documentation. Allows manytomany association between sites powered by same Django installation
+
+#Directory to upload media files, pictures, videos
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+#+++++++ Start : Payments App Configuration +++++++++++++++
+PAYMENT_HOST = 'luiseduardo8899.hopto.org:8000'
+PAYMENT_USES_SSL = False
+PAYMENT_MODEL = 'premiumaccount.Payment'
+PAYMENT_VARIANTS = {
+    'default': ('payments.dummy.DummyProvider', {})}
+#+++++++ End : Payments App Configuration +++++++++++++++
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -49,12 +94,23 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+LOGIN_REDIRECT_URL = '/hello/'
+LOGOUT_REDIRECT_URL = '/byebye/'
 ROOT_URLCONF = 'japan_project.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'sitewide', 'templates'),],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,10 +129,20 @@ WSGI_APPLICATION = 'japan_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
+#<DEFAULT>DATABASES = {
+#<DEFAULT>    'default': {
+#<DEFAULT>        'ENGINE': 'django.db.backends.sqlite3',
+#<DEFAULT>        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#<DEFAULT>    }
+#<DEFAULT>}
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'jpdb',
+        'USER': 'jpdb_user',
+        'PASSWORD': '$UperArc#',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
@@ -118,3 +184,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
