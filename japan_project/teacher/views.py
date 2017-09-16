@@ -303,7 +303,12 @@ def add_sense(entry, sense_x_set):
             glosses = Gloss.objects.all().filter(text = gloss_x.text) 
             if not glosses : #create a new one and save
                 gloss = Gloss()
-                gloss.text = gloss_x.text
+                #slice gloss elemetn if too long
+                if len(gloss_x.text) > 199:
+                    gloss.text = gloss_x.text[0:199]
+                else:
+                    gloss.text = gloss_x.text
+                logger.warning('WARNING: Had to slice a Gloss Element: %s ' % gloss.text) 
                 gloss.save()
             else :
                 gloss = glosses[0]

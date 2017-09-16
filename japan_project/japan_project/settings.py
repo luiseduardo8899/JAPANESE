@@ -54,21 +54,22 @@ INSTALLED_APPS = [
     'haystack',
 ]
 
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-        'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
-    },
-}
+#HAYSTACK_CONNECTIONS = {
+#    'default': {
+#        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+#        'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
+#    },
+#}
 
 #SOLR - Haystack connection
-#<TODO>HAYSTACK_CONNECTIONS = {
-#<TODO>    "default": {
-#<TODO>        "ENGINE": "haystack.backends.solr_backend.SolrEngine",
+HAYSTACK_CONNECTIONS = {
+    "default": {
+        "ENGINE": "haystack.backends.solr_backend.SolrEngine",
 #<TODO>        "URL": "http://127.0.0.1:8983/solr/japan_core"
-#<TODO>    },
-#<TODO>    # ... other settings ...
-#<TODO>}
+        "URL": "http://luiseduardo8899.hopto.org:8983/solr/japan_core"
+    },
+    # ... other settings ...
+}
 
 SITE_ID=1 #from `allauth` setup documentation. Allows manytomany association between sites powered by same Django installation
 
