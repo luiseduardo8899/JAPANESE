@@ -1,0 +1,67 @@
+INSTALLATION FOR SOLR:
+
+A. Following the following installation procedure for Solr for HAYSTACK/DJANGO 
+  Source: http://django-haystack.readthedocs.io/en/latest/installing_search_engines.html#solr
+
+	#> curl -LO https://archive.apache.org/dist/lucene/solr/x.Y.0/solr-X.Y.0.tgz
+	#> tar -C solr -xf solr-X.Y.0.tgz --strip-components=1
+	#> mkdir solr
+	#> cd solr
+	#> ./bin/solr create -c tester -n basic_config
+
+B. By default this will create a core with a managed schema. This setup is dynamic but not useful for haystack.
+
+Copy the solr/server/solr/tester/conf/managed-schema to schema.xml
+
+	#> cd server/solr/tester/conf
+	#> cp managed-schema schema.xml
+
+B.1 Now edit the  server/solr/tester/conf/solrconfig.xml, and add this line:
+	<schemaFactory class="ClassicIndexSchemaFactory" />
+
+C. Start the solr server:
+	#> cd solr/bin
+ 	#> ./solr start
+
+        To stop it at any time :
+	#> solr stop
+
+ . Once you start it you cna visit the solr server you are running pointing a 
+ browser to the URL: "http://127.0.0.1:8983/solr"
+
+ . Check that there are no errors in the console log section of the page, if there are check the 
+ error and fix the schema.xml (i.e : duplicate fields, deprecated fields)
+
+D. Now edit the Haystack connections setting in the project's settings.py
+
+#SOLR - Haystack connection
+HAYSTACK_CONNECTIONS = {
+    "default": {
+        "ENGINE": "haystack.backends.solr_backend.SolrEngine",
+        "URL": "http://127.0.0.1:8983/solr/tester"
+    },
+    # ... other settings ...
+}
+
+
+E. Run manage.py to print out a schema. NOTE: Seems solr and schema versions are not alwayd compatible, so we have merged the django specific fields into the schame.xml we generated above: 
+
+	#> ./manage.py build_solr_schema 
+
+E.1: We have mainly copied these lines which are printed out into server/solr/tester/conf/schema.xml
+
+ <!-- DJANGO SPECIFIC FIELDS  -->
+ <field name="django_ct" type="string" indexed="true" stored="true" multiValued="false"/>
+ <field name="django_id" type="string" indexed="true" stored="true" multiValued="false"/>
+ <dynamicField name="*_coordinate"  type="tdouble" indexed="true"  stored="false"/>
+ <field name="text" type="text_en" indexed="true" stored="true" multiValued="false" />
+ <!-- DJANGO SPECIFIC FIELDS  -->
+
+E.2: Stop and start the solr server again (./bin/solr stop/start )
+
+E.3: Check in the browser that the solr server reports no new errors after loading the Django fields.
+
+F. Finally let's reindex the search models:
+
+	#> manage.ppy rebuild_index
+

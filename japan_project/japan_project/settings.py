@@ -65,8 +65,7 @@ INSTALLED_APPS = [
 HAYSTACK_CONNECTIONS = {
     "default": {
         "ENGINE": "haystack.backends.solr_backend.SolrEngine",
-#<TODO>        "URL": "http://127.0.0.1:8983/solr/japan_core"
-        "URL": "http://luiseduardo8899.hopto.org:8983/solr/japan_core"
+        "URL": "http://127.0.0.1:8983/solr/tester"
     },
     # ... other settings ...
 }
