@@ -54,6 +54,23 @@ INSTALLED_APPS = [
     'haystack',
 ]
 
+#EMAIL
+#Incoming mail server: mail.gokokan.com 
+#Incoming mail server type: POP3 or IMAP (your choice) 
+#Incoming mail server username: japanese@gokokan.com (use the whole thing!)
+#
+#Outgoing (SMTP) mail server: mail.gokokan.com
+#My server requires authentication: checked. (use same settings as incoming mail server) 
+#Use secure password authentication: not checked.
+
+EMAIL_HOST = "mail.gokokan.com"
+EMAIL_PORT = "465"
+EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False
+EMAIL_HOST_USER = "japanese@gokokan.com"
+EMAIL_HOST_PASSWORD = "$&#frvrFR##"
+
+
 #HAYSTACK_CONNECTIONS = {
 #    'default': {
 #        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
@@ -65,7 +82,9 @@ INSTALLED_APPS = [
 HAYSTACK_CONNECTIONS = {
     "default": {
         "ENGINE": "haystack.backends.solr_backend.SolrEngine",
-        "URL": "http://127.0.0.1:8983/solr/tester"
+        "URL": "http://127.0.0.1:8983/solr/tester",
+        "INCLUDE_SPELLING":'True',
+        "HAYSTACK_ITERATOR_LOAD_PER_QUERY":"40",
     },
     # ... other settings ...
 }

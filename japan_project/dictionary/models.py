@@ -59,6 +59,21 @@ class Entry(models.Model):
     class Meta:
         ordering = ['pub_date']
 
+    def get_text(self):
+        kebs = self.keb_set.all()
+        rebs = self.reb_set.all()
+        if len(kebs) != 0 :
+            return kebs[0].text
+        elif len(rebs) != 0 :
+            return rebs[0].furigana
+
+    def get_definition(self):
+        senses = self.sense_set.all()
+        if len(senses) != 0 :
+            glosses = senses[0].gloss_set.all()
+            if len(glosses) != 0 :
+                return glosses[0].text
+
 #Class Keb: 
 #Different ways an entry can be written (i.e different kanjis)
 #A Keb object may match multiple Entry objects

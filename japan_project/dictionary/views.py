@@ -9,6 +9,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from random import *
+from django.core.mail import send_mail
 
 # Search Dictionary View #TODO :define a new index page for dictionary
 def index(request):
@@ -98,8 +99,10 @@ def random(request):
 
     entry  = get_random_entry()
     entry_stats = get_entry_stats(user, entry , 0) #0, do not new unless user decides to add to list
+    title = entry.get_text()
+    description = entry.get_definition()
     #display of entry is completely handled by template. Q: Is this faster? as opposed to processing text here..
-    return render(request, "dictionary/detail.html", {'entry':entry, 'user':user, 'stats':stats, 'entry_stats':entry_stats})
+    return render(request, "dictionary/detail.html", {'entry':entry, 'user':user, 'stats':stats, 'entry_stats':entry_stats, 'title':title, 'description':description})
 
 #View Function : detail(request, word_id):
 # View details for a specififc function
@@ -110,15 +113,39 @@ def detail(request, word_id):
     entry  = get_entry_by_id(word_id)
     entry_stats = ""
     #entry_stats = get_entry_stats(user, entry , 0) #0 do not new if does not exist
-    return render(request, "dictionary/detail.html", {'entry':entry, 'user':user, 'stats':stats, 'entry_stats':entry_stats })
+    title = entry.get_text()
+    description = entry.get_definition()
+    return render(request, "dictionary/detail.html", {'entry':entry, 'user':user, 'stats':stats, 'entry_stats':entry_stats, 'title':title, 'description':description})
 
 def learn(request, word_id):
     user = get_user(request)
     stats = get_stats(user)
-    entry  = get_entry(word_id)
+    entry  = get_entry_by_id(word_id)
     entry_stats = get_entry_stats(user, entry , 1) #1 new if does not exist
 
     return render(request, "dictionary/detail.html", {'entry':entry, 'user':user, 'stats':stats, 'entry_stats': entry_stats})
+
+def send_email(request, email, word_id):
+    user = get_user(request)
+    stats = get_stats(user)
+    entry  = get_entry_by_id(word_id)
+    #text = entry.get_text() # get Keb or Reb
+    #definition = entry.get_definition() # get First definition
+    text = "SABUI"
+    definition = " Lame, uninteresting"
+    #form title of the email   
+    title  = text+': '+definition
+
+    #body : send html text for body # send summary, and link to full entry
+    #send email, and remain in detail page
+    send_mail(
+        title,
+        'This is the word entry',
+        'japanese@gokokan.com',
+        [email],
+        fail_silently=False,
+    )
+    return render(request, "dictionary/detail.html", {'entry':entry})
 
 #from list view, if user hits remove, remove item and refresh list
 def remove(request, word_id):

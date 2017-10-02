@@ -1,4 +1,5 @@
 {% extends "account/base.html" %}
+{% load static %}
 
 {% load i18n %}
 {% load account socialaccount %}
@@ -6,51 +7,106 @@
 
 {% block content %}
 
+<!--
+<style> 
+body {
+    background-image:url({% static "/splash/splash1.jpg" %}) ;
+}
+</style>
+-->
+
 <!-- Start your project here-->
 {% if not query or  page.object_list|length  == 0  %}
-    <div style="height:38vh">
+    <div style="height:38vh;">
         <div class="flex-center flex-column">
-            <h2 class="animated fadeIn mb-1 display-4" style="color:black">GOKOKAN </h2>
-            <h3 class="animated fadeIn mb-1 " style="color:grey">Japanese Dictionary</h3>
+            <h2 class="animated fadeIn mb-3 display-3" style="color:white; background-color:black">GOKOKAN </h2>
+            <h3 class="animated fadeIn mb-3 " style="color:white;  background-color:black">Japanese Dictionary</h3>
         </div>
     </div>
 {% endif %}
 
-<!--Search Box -->
-{% if not query or  page.object_list|length  == 0  %}
-    <div style="height:38vh">
 
-        <div class="flex-center flex-column">
-            <form class="col-md-4" method="get" action=".">
+<!--Search Box -->
+    <div style="height:20vh">
+
+        <div class="flex-center flex-column " >
+{% if not query or  page.object_list|length  == 0 %}
+{% else %}
+            <h2 href="/search" class="animated fadeIn mb-3 display-3" style="color:white; background-color:black">GOKOKAN </h2>
+{% endif %}
+            <form class="col-md-4" method="get" action="." >
                 {% csrf_token %}
-                <div class="md-form form-group form-group-lg">
-                    <i class="fa fa-search prefix "></i>
+                <div class="md-form form-group form-group-lg" >
+                    <i class="fa fa-search prefix " ></i>
                     {% if query %}
                     <input id="id_q" name="q" type="search" class="input-lg" value={{ query }}>
                     {% else %}
-                    <input id="id_q" name="q" type="search" class="input-lg">
+                    <input id="id_q" name="q" type="search" class="input-lg" >
                     {% endif %}
-                    <label for="id_q" ><h5>Search dictionary here...</h5></label> 
+                    <label for="id_q" ><h4>Search dictionary here...</h4></label> 
                 </div>
                 <div class="md-form form-group">
-                    <button type="submit" class="btn btn-unique btn-lg btn-block">Search</button>
+                    <button type="submit" class="btn btn-unique btn-lg btn-block pink">Search</button>
                 </div>
             </form>
         </div>
 
     </div>
-{% endif %}
 
 {% if not query or  page.object_list|length  == 0 %}
 {% else %}
-    <div style="height:38vh">
-        <div class="flex-center flex-row "> 
+    <div style="height:38vh" >
+        <div class="flex-center flex-column "> 
         <div class="col-md-5">
               {% if  page.paginator.num_pages  == 1 %}
-                  <h1 style="color:#ff69b4">We found a total of {{ page.object_list|length }} dictionary entries </h1>
+                  <h3 style="color:#ff69b4">We found a total of {{ page.object_list|length  }} dictionary entries </h3>
               {% else %}
-                  <h2 style="color:#ff69b4">Showing {{ page.object_list|length }} of {{ page.paginator.count }} Results on Page {{ page.number }} of {{ page.paginator.num_pages }} </h2>
+                  <h3 style="color:#ff69b4">Showing Page Number#{{ page.number }} of {{ page.paginator.num_pages|add:"-1" }} pages.</h3>
              {% endif %}
+
+            <!-- START TOP PAGINATION MENU -->
+            {% if page.has_previous or  page.has_next and  paginator.num_pages !=  2 %}
+            <hr>
+                <nav>
+                  <ul class="pagination">
+                   {% if page.has_previous %}
+                    <li class="page-item ">
+                      <a class="page-link" href="?q={{ query }}&amp;page={{ page.previous_page_number }}" aria-label="Previous">
+                   {% else %}
+                    <li class="page-item disabled">
+                      <a class="page-link" href="#" aria-label="Previous">
+                   {% endif %}
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                      </a>
+                    </li>
+
+                    {% for p in paginator.page_range %}
+                      {% if paginator.num_pages != p %}
+                      {% if p >= page.number|add:"-5" and  p <= page.number|add:"5"  %}
+                      <li class="page-item {% if p == page.number %}active{% endif %}">
+                      <a class="page-link" href="?q={{ query }}&amp;page={{ p }}">{{ p }}<span class="sr-only">(current)</span></a>
+                      </li>
+                      {% endif %}
+                      {% endif %}
+                    {% endfor %}
+
+
+                   {% if page.has_next and paginator.num_pages != page.next_page_number %}
+                    <li class="page-item ">
+                   {% else %}
+                    <li class="page-item disabled">
+                   {% endif %}
+                      <a class="page-link" href="?q={{ query }}&amp;page={{ page.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+            {% endif %}
+            <hr>
+            <!-- END TOP PAGINATION MENU -->
              <hr>
         </div>
         </div>
@@ -66,11 +122,9 @@
 
 <!--Card-->
 <div class="card">
-
     <!--Card image-->
     <!-- <img class="img-fluid" src="https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20%282%29.jpg" alt="Card image cap"> -->
     <!--/.Card image-->
-
     <!--Card content-->
     <div class="card-block">
         <!--Title-->
@@ -112,7 +166,14 @@
             {% endfor %}
 
 
-            {% if page.has_previous or page.has_next %}
+
+
+        {% else %}
+            {# Show some example queries to run, maybe query syntax, something else? #}
+        {% endif %}
+
+            <!-- START BOTTOM PAGINATION MENU -->
+            {% if page.has_previous or  page.has_next and  paginator.num_pages !=  2 %}
             <hr>
                 <nav>
                   <ul class="pagination">
@@ -127,42 +188,19 @@
                         <span class="sr-only">Previous</span>
                       </a>
                     </li>
-                   {% if page.number == 1 %}
-                    <li class="page-item active">
-                   {% else %}
-                    <li class="page-item">
-                   {% endif %}
-                      <a class="page-link" href="?q={{ query }}&amp;page=1">1 <span class="sr-only">(current)</span></a>
-                    </li> 
-                   {% if page.number == 2 %}
-                    <li class="page-item active">
-                   {% else %}
-                    <li class="page-item">
-                   {% endif %}
-                   <a class="page-link" href="?q={{ query }}&amp;page=2">2</a>
-                   </li>
-                   {% if page.number == 3 %}
-                    <li class="page-item active">
-                   {% else %}
-                    <li class="page-item">
-                   {% endif %}
-                   <a class="page-link" href="?q={{ query }}&amp;page=3">3</a>
-                   </li>
-                   {% if page.number == 4 %}
-                    <li class="page-item active">
-                   {% else %}
-                   <li class="page-item">
-                   {% endif %}
-                    <a class="page-link" href="?q={{ query }}&amp;page=4">4</a>
-                    </li>
-                   {% if page.number == 5 %}
-                    <li class="page-item active">
-                   {% else %}
-                    <li class="page-item">
-                   {% endif %}
-                   <a class="page-link" href="?q={{ query }}&amp;page=5">5</a>
-                   </li>
-                   {% if page.has_next %}
+
+                    {% for p in paginator.page_range %}
+                      {% if paginator.num_pages != p %}
+                      {% if p >= page.number|add:"-5" and  p <= page.number|add:"5"  %}
+                      <li class="page-item {% if p == page.number %}active{% endif %}">
+                      <a class="page-link" href="?q={{ query }}&amp;page={{ p }}">{{ p }}<span class="sr-only">(current)</span></a>
+                      </li>
+                      {% endif %}
+                      {% endif %}
+                    {% endfor %}
+
+
+                   {% if page.has_next and paginator.num_pages != page.next_page_number %}
                     <li class="page-item ">
                    {% else %}
                     <li class="page-item disabled">
@@ -175,18 +213,13 @@
                   </ul>
                 </nav>
             {% endif %}
-
-
-        {% else %}
-            {# Show some example queries to run, maybe query syntax, something else? #}
-        {% endif %}
-
+            <hr>
+            <!-- END BOTTOM PAGINATION MENU -->
     </div>
 </div>
 </div>
 
 <div style="height:19vh">
-<hr>
 </div>
 
 {% endblock %}
