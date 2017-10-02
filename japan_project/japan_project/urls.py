@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.views.generic.base import RedirectView
 from . import views
 
 urlpatterns = [
@@ -27,7 +28,7 @@ urlpatterns = [
     url(r'^userinfo/', include('userinfo.urls')),
     url(r'^dictionary/', include('dictionary.urls')),
     url(r'^search/', include('haystack.urls')),
-    url(r'^hello/', views.hello, name='hello'), #TODO : add a splash page for dictionary
-    url(r'^byebye/', views.byebye, name='byebye'), #TODO : add a splash page for dictionary
-    #url(r'^', views.welcome, name='welcome'), #TODO : add a splash page for dictionary
+    #url(r'^hello/', views.hello, name='hello'), #TODO : add a splash page for dictionary
+    #url(r'^byebye/', views.byebye, name='byebye'), #TODO : add a splash page for dictionary
+    url(r'^.*$', RedirectView.as_view(url='/search/', permanent=False), name='index')
 ]
