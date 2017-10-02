@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html lang = "en">
+
+{% load static %}
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
+    <!-- Bootstrap core CSS -->
+    <link href="{% static "mdb/css/bootstrap.css" %}" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="{% static "mdb/css/mdb.css" %}" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="{% static "mdb/css/style.css" %}" rel="stylesheet">
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+</head>
+<head>
+    <!-- You can use open graph tags to customize link previews.
+    Learn more: https://developers.facebook.com/docs/sharing/webmasters -->
+    <title>{{ title }}: {{ definition }}</title>
+    <meta property="og:url"           content="luiseduardo8899.hopto.org{{ request.get_full_path }}"/>
+    <meta property="og:type"          content="website" />
+    <meta property="og:title"         content="{{ title }}" />
+    <meta property="og:description"   content="{{ description}}" />
+    <!-- <meta property="og:image"         content="http://www.your-domain.com/path/image.jpg" /> -->
+</head>
+
+<body>
+
+<div style="height:8vh">
+</div>
+
+    <div>
+    <!-- CONTENT FOR TEMPLATES THAT EXTEND THIS BASE GOES HERE -->
+            {% block content %}
+            {% endblock %}
+    </div>
+
+<div style="height:2vh">
+</div>
+
+<!--Bottom Navbar-->
+<!--
+<nav class="navbar navbar-toggleable-md navbar-light white bg-primary fixed-bottom">
+    <div class="container">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav1" aria-controls="navbarNav1" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="/search" <strong>GOKOKAN</strong></a>
+        <div class="collapse navbar-collapse" id="navbarNav1">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/dictionary/random"><i class="fa fa-random fa-lg" aria-hidden="true"></i>Random<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/dictionary/random_quiz"><i class="fa fa-tasks fa-lg" aria-hidden="true"></i>Practice<span class="sr-only">(current)</span></a>
+                </li>
+            </ul>
+            <form class="form-inline waves-effect waves-light"  action="/search" method="get">
+            {% csrf_token %}
+                <i class="fa fa-search prefix"></i>
+                <input id="id_q" class="form-control" type="search" name="q" placeholder="Search dictionary">
+            </form>
+            <div class="nav-item dropup btn-group">
+                <a class="nav-link dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Account<i class="fa fa-cog fa-lg" aria-hidden="true"></i></a>
+                <div class="dropdown-menu dropdown" aria-labelledby="dropdownMenu1">
+                    <a class="dropdown-item" href="/account/login/">Login</a>
+                    <a class="dropdown-item" href="/account/logout/">Logout</a>
+                    <a class="dropdown-item" href="/userinfo/statistics">Stats</a>
+                    <a class="dropdown-item" href="/dictionary/list/">Vocab List</a>
+                    <a class="dropdown-item" href="/userinfo/view/">Profile</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</nav>
+-->
+
+    <!-- SCRIPTS -->
+    <!-- JQuery -->
+    <script type="text/javascript" src="{% static "mdb/js/jquery-3.1.1.js" %}" ></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="{% static "mdb/js/tether.js" %}" ></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="{% static "mdb/js/bootstrap.js" %}" ></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="{% static "mdb/js/mdb.js" %}" ></script>
+</body>
+
+</html>
