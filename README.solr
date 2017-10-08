@@ -4,10 +4,13 @@ A. Following the following installation procedure for Solr for HAYSTACK/DJANGO
   Source: http://django-haystack.readthedocs.io/en/latest/installing_search_engines.html#solr
 
 	#> curl -LO https://archive.apache.org/dist/lucene/solr/x.Y.0/solr-X.Y.0.tgz
-	#> tar -C solr -xf solr-X.Y.0.tgz --strip-components=1
 	#> mkdir solr
+	#> tar -C solr -xf solr-X.Y.0.tgz --strip-components=1
 	#> cd solr
+	#> ./bin solr start  (starts a SOLR instance on port 8983)
+ 	   Note: See SOLR server here: http://www.gokokan.com:8983/solr/#
 	#> ./bin/solr create -c tester -n basic_config
+ 	   Note: See tester confgi here:  http://www.gokokan.com:8983/solr/#/~cores/tester
 
 B. By default this will create a core with a managed schema. This setup is dynamic but not useful for haystack.
 

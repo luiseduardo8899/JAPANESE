@@ -67,6 +67,11 @@ class Entry(models.Model):
         elif len(rebs) != 0 :
             return rebs[0].furigana
 
+    def get_romanji(self):
+        rebs = self.reb_set.all()
+        if len(rebs) != 0 :
+            return rebs[0].romanji
+
     def get_definition(self):
         senses = self.sense_set.all()
         if len(senses) != 0 :
