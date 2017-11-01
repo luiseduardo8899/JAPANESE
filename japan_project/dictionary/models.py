@@ -45,12 +45,12 @@ SENSETAG_IDS=(
 #Class Entry 
 #Class for all dictionary entries (nouns, verbs, adjectives, etc)
 class Entry(models.Model):
-    level = models.IntegerField(default=0)     #level of difficulty (0-4095)
-    #jlpt_level = models.IntegerField(choices=JLPT_LEVELS, default=JLPT_N5)#level of difficulty (1-5) : N1 - N5 (level other than 1-5 will mean not currently classified) #TODO: add this is noun, verb, etc.. class
+    #level = models.IntegerField(default=0)     #level of difficulty (0-4095)
+    seqid = models.IntegerField(default=0)    #JDICT unique entry sequence ID, used to relate LanguageBits:Vocabulary to Dictionary:Entry
     pub_date = models.DateTimeField('date published')
 
     def __str__(self):
-        return "Entry#%s" % self.pk
+        return "Entry#%s" % self.entryid
 
     #placeholder for checking how long ago the entry was made ( detect novel words )
     def was_published_recently(self):
@@ -62,10 +62,23 @@ class Entry(models.Model):
     def get_text(self):
         kebs = self.keb_set.all()
         rebs = self.reb_set.all()
+        ronly = self.mostly_hiragana()
+        ktext = ""
+        rtext = ""
+
         if len(kebs) != 0 :
-            return kebs[0].text
-        elif len(rebs) != 0 :
-            return rebs[0].furigana
+            ktext = kebs[0].text
+
+        if len(rebs) != 0 :
+            rtext = rebs[0].furigana
+
+        if len(kebs) == 0 :
+            ronly = True
+
+        if ronly == True:
+            return rtext
+        else :
+            return ktext
 
     def get_romanji(self):
         rebs = self.reb_set.all()
@@ -78,6 +91,16 @@ class Entry(models.Model):
             glosses = senses[0].gloss_set.all()
             if len(glosses) != 0 :
                 return glosses[0].text
+
+    def mostly_hiragana(self):
+        senses = self.sense_set.all()
+        bit = False
+        if len(senses) != 0 :
+            tags = senses[0].sensetag_set.all()
+            for tag in tags:
+                if tag.text == "word usually written using kana alone":
+                    bit = True
+        return bit
 
 #Class Keb: 
 #Different ways an entry can be written (i.e different kanjis)

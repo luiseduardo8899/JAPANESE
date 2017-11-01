@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'teacher.apps.TeacherConfig',
     'userinfo.apps.UserinfoConfig',
     'dictionary.apps.DictionaryConfig',
+    'languagebits.apps.LanguagebitsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -148,22 +149,22 @@ WSGI_APPLICATION = 'japan_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-#<DEFAULT>DATABASES = {
-#<DEFAULT>    'default': {
-#<DEFAULT>        'ENGINE': 'django.db.backends.sqlite3',
-#<DEFAULT>        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#<DEFAULT>    }
-#<DEFAULT>}
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'jpdb',
-        'USER': 'jpdb_user',
-        'PASSWORD': '$UperArc#',
-        'HOST': 'localhost',
-        'PORT': '',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        'NAME': 'jpdb',
+#        'USER': 'jpdb_user',
+#        'PASSWORD': '$UperArc#',
+#        'HOST': 'localhost',
+#        'PORT': '',
+#    }
+#}
 
 
 # Password validation

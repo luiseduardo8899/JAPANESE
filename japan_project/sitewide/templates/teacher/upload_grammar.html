@@ -1,0 +1,16 @@
+{% extends "account/base.html" %}
+{% load static %}
+
+{% block content %}
+<br>
+<br>
+<h1>Upload new Grammar in XML format</h1>
+<h2>* Make sure your XML file follows the GKgrammar format *</h2>
+<hr>
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<form action="{% url 'teacher:update_grammar' %}" method="post" enctype="multipart/form-data">
+{% csrf_token %}
+<input type="file" class="btn btn-lg black" name="xml_data_file">
+<input type="submit" class="btn btn-lg blue" value="Upload Grammar XML File" name="submit">
+
+{% endblock %}

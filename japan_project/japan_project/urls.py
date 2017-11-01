@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^teacher/', include('teacher.urls')),
     url(r'^userinfo/', include('userinfo.urls')),
     url(r'^dictionary/', include('dictionary.urls')),
+    url(r'^language/', include('languagebits.urls')),
     url(r'^search/', include('haystack.urls')),
     #url(r'^hello/', views.hello, name='hello'), #TODO : add a splash page for dictionary
     #url(r'^byebye/', views.byebye, name='byebye'), #TODO : add a splash page for dictionary

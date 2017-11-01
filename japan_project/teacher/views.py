@@ -1,10 +1,13 @@
 import os
-import xml.etree.ElementTree as etree
+import xml.etree.ElementTree as metree
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from userinfo.models import Profile, Statistics
 from userinfo.utils import *
+from dictionary.utils import *
 from dictionary.models import *
+from languagebits.models import *
+from languagebits.utils import *
 from django.template import loader
 from django.http import Http404
 from django.urls import reverse
@@ -14,6 +17,10 @@ import time
 from csv import reader
 import romkan
 import datetime
+import svgwrite
+import random
+from svgwrite import *
+from cairosvg import svg2png
 import logging #python logging utility
 
 # Upload Vocabulary in XML format / Follow JMdict format
@@ -24,6 +31,126 @@ logger = logging.getLogger('/home/luis/dictionaryViewsLogger.log')
 logger2 = logging.getLogger('/home/luis/dictionaryViewsLogger2.log')
 #namesapce required for xml:lang in lsource
 nsmap = {"xml": "http://www.w3.org/XML/1998/namespace"}
+
+def create_images(request):
+    user = get_user(request)
+    template = loader.get_template('teacher/create_images.html')
+
+    #loop through all images
+    #random number from 1 -100000
+    for entry in  Entry.objects.all():
+        #pkid = random.randint(0, Entry.objects.count() - 1)
+        # pkid = random.randint(1,100000)
+
+        #entry = get_entry_by_id(pkid)
+        pkid = entry.pk
+        text = entry.get_text()
+
+        bk = random.randint(1,2)
+        #furigana = entry.get_furigana()
+        romanji = entry.get_romanji()
+        definition = entry.get_definition()
+        if pkid % 3 == 0 :
+            bkcolor = "#2bd6ab" 
+        elif pkid % 2 == 0 :
+            bkcolor = "#e6d72e" 
+        else :
+            bkcolor = "#f54e30"
+
+        if bk == 1:
+            color1 = "white"
+            color2 = "black"
+        else: 
+            color1 = "black"
+            color2 = "white"
+
+        #TODO: Check if user is admin
+        #dwg = svgwrite.Drawing('static/test2.svg', height=900, width=900)
+        imgname = "static/img_sm_"+str(pkid)+".svg"
+        #dwg = svgwrite.Drawing(filename = "static/test2.svg", size=("550px", "270px"))
+        #dwg.add_stylesheet('static/svgstyle.css', title="svgstyle") # same rules as for html files
+        #dwg.add(dwg.rect((0, 0), (550, 135), fill=bkcolor))
+        #g = dwg.g(class_="myclass")
+        #g.add(dwg.text(text, insert=(40,60), style = "font-size:40px; font-family:Arial", fill=color1))
+        #g.add(dwg.text("[ "+romanji+" ]", insert=(40,100), style = "font-size:20px; font-family:Arial;", fill=color1))
+
+        #lendef = len(definition)
+        #if lendef > 50:
+        #    definition = definition[0:50]+'...'
+        #g.add(dwg.text(definition, insert=(30,160), style = "font-size:20px; font-family:Arial", fill="black"))
+
+        #g.add(dwg.text("gokokan.com", insert=(400,250), style = "font-size:15px; font-family:Arial", fill="black"))
+
+        #dwg.add(g)
+        #dwg.save()
+
+        #svg2png(url="static/test2.svg", write_to="static/myfile.png")
+
+
+        #--------------------------------- Facebook drawing ---------------------------------------------------------------#
+        dwg2 = svgwrite.Drawing(filename = imgname, size=("260px", "260px"))
+        dwg2.add_stylesheet('static/svgstyle.css', title="svgstyle") # same rules as for html files
+        dwg2.add(dwg2.rect((0, 0), (260, 260), fill=bkcolor))
+        g2 = dwg2.g(class_="myclass")
+        g2.add(dwg2.text(text[0], insert=(80,140), style = "font-size:100px; font-family:Arial", fill=color1))
+
+        g2.add(dwg2.text("GOKOKAN", insert=(60,220), style = "font-size:30px; font-family:Arial", fill=color2))
+
+        dwg2.add(g2)
+        dwg2.save()
+        #--------------------------------- Facebook drawing ---------------------------------------------------------------#
+
+    context = {
+        'user': user,
+    }
+    return HttpResponse(template.render(context, request))
+
+#Upload GKgrammar XML
+def upload_grammar(request):
+    user = get_user(request)
+    profile = None
+    #profile = get_profile(user)
+    template = loader.get_template('teacher/upload_grammar.html')
+    #TODO: Check if user is admin
+    context = {
+        'user': user,
+        'profile': profile,
+    }
+    return HttpResponse(template.render(context, request))
+
+
+#process form and update the vocabulary in the database
+def update_grammar(request):
+    user = get_user(request)
+    #TODO: check that user is admin user
+	#try and retrieve Form inputs..
+    if request.method == 'POST' and request.FILES['xml_data_file']:
+        xml_file = request.FILES['xml_data_file']
+        fs = FileSystemStorage()
+        filename = fs.save(xml_file.name, xml_file)
+        uploaded_file_url = fs.url(filename)
+        #process the csv data
+        #python3 supports utf-8 encoding natively
+        # error_in_file = check_csv_format(uploaded_file_url)
+        #error_in_file = check_xml_format()
+        error_in_file = False #TODO: Check XML format matches GKgrammar
+        if error_in_file == False :
+            #BASE_DIR = "/home/luis/TRIBU/projects/JAPANESE/"
+            #MEDIA_URL = os.path.join(BASE_DIR, uploaded_file_url)
+            process_grammar_xml_file(uploaded_file_url)
+            #process_csv_file(uploaded_file_url)
+
+        return render(request, 'teacher/successful_upload.html', {
+            'uploaded_file_url': uploaded_file_url,
+            'error_in_file': error_in_file
+        })
+
+
+        # Always return an HttpResponseRedirect after successfully dealing
+        # with POST data. This prevents data from being posted twice if a
+        # user hits the Back button.
+        # TODO: how to pass arguments to redirect page ? 
+    return HttpResponseRedirect('teacher/successful_upload')
 
 
 
@@ -318,19 +445,62 @@ def add_sense(entry, sense_x_set):
             gloss.save()
             logger.info('FINISHED UPDATING GLOSS: %s' % gloss.text)
            
+#TODO: Save a backup XML of the GKgrammar in the database
+def dump_grammar_xml_file():
+    return "TODO"
 
 
+#Add all Grammar Description Elements found in the GrammarEntry
+def add_grammar_description(entry, description_set):
+    for description_x in description_set :
+        gdescription = GrammarDescription()
+        gdescription.text = description_x.text
+        gdescription.save()
+        gdescription.entry.add(entry) # add entry pointer to list
+    
 
-#Format for XML Files will be same as used in the JMdct file. 
-#Any nes aditions to the vocabulary should be done manually or using the same format as JMdict
-def process_xml_file(xml_file):
+#Add all GrammarPattern Elements found in the GrammarEntry
+def add_grammar_formula(entry, formula_set):
+    for formula_x in formula_set:
+        name_x = formula_x.findall('fname')
+        pformulas = PatternFormula.objects.all().filter(text = name_x[0].text) #for entry to be duplicate the text must be exactly the same
+        if not pformulas :
+            logger.info("No duplicates detected, Creating a new PatternFomrula")
+            pformula = PatternFormula()
+            pformula.text = name_x[0].text
+            pformula.save()
+            logger.info('ADDED NEW PatternFormula: %s' % pformula.text)
+            item_set_x = formula_x.findall('pitem') #Multiple PatternItems form a PatternFormula
+            for item_x in item_set_x :
+                pitems = PatternItem.objects.all().filter(text = item_x.text) #for entry to be duplicate the text must be exactly the same
+                if not pitems :
+                    logger.info("IF DETECTED NO PITEM CREATE NEW ONE" )
+                    pitem = PatternItem()
+                    pitem.text = item_x.text
+                    pitem.save()
+                    logger.info('ADDED NEW PatternItem: %s' % pitem.text)
+                else :
+                    pitem = pitems[0]
+                    logger.info('USING EXISTING PatternItem: %s ' % pitem.text) 
+                if len(pitems) > 1 : 
+                    logger.warning('WARNING DUPLICATE PatternItems: %s ' % pitem.text) 
+                pitem.formula.add(pformula) # add entry pointer to list
+                pitem.save()
+        else :
+            pformula = pformulas[0]
+            logger.info('WARNING:  Detected a Duplicate GrammarFormula in a Grammar Entry: %s. Ignoring this FormulaEntry' % pformula.text)
+
+        pformula.entry.add(entry) # add entry pointer to list
+
+#Process a GKgrammar file
+def process_grammar_xml_file(xml_file):
     list_of_entries = []
     number = 0
 
     logger2.info('Processing XML File - ')
     #Main execution code
-    #load the entire JMdict_e XML File 
-    tree = etree.parse(xml_file)
+    #load the entire GKgrammar XML File 
+    tree = metree.parse(xml_file)
 
     #get root of the XML File
     root = tree.getroot()
@@ -345,7 +515,57 @@ def process_xml_file(xml_file):
         number += 1
         #create the entry
         level_x = 0 #default level 0, level assigned in later processing
-        entry = Entry(level=level_x)
+        entry = GrammarEntry()
+        ent_seq_set_x = entry_x.findall('ent_seq')
+        name_set_x = entry_x.findall('name')
+        entry.seqid = ent_seq_set_x[0].text
+        entry.text = name_set_x[0].text
+        #entry.pub_date = datetime.datetime.now()
+        #get kanji and reading element, kanji element may be empty
+        jlpt_level_set = entry_x.findall('jlpt') # Kanji Element
+        entry.jlptlevel = jlpt_level_set[0].text
+        level_set = entry_x.findall('level') # Sublevel
+        entry.level = jlpt_level_set[0].text
+        summary_set = entry_x.findall('summary') # Summary
+        entry.summary = summary_set[0].text
+        entry.save()
+
+        description_set = entry_x.findall('description') # Full Description
+        formula_set = entry_x.findall('formula') # Grammar Pattern
+
+        add_grammar_description(entry, description_set)
+        add_grammar_formula(entry, formula_set)
+        
+    return list_of_entries # return the list of uploaded entries ( KEB/REB )
+
+
+#Format for XML Files will be same as used in the JMdct file. 
+#Any nes aditions to the vocabulary should be done manually or using the same format as JMdict
+def process_xml_file(xml_file):
+    list_of_entries = []
+    number = 0
+
+    logger2.info('Processing XML File - ')
+    #Main execution code
+    #load the entire JMdict_e XML File 
+    tree = metree.parse(xml_file)
+
+    #get root of the XML File
+    root = tree.getroot()
+
+    #TODO: Check the XML format...
+    logger2.info('TODO: Check XML format  - ')
+
+    #get all entries in the file
+    entries_x = root.findall('entry')
+    logger.info("Got root %s" % root)
+    for entry_x in entries_x:
+        number += 1
+        #create the entry
+        level_x = 0 #default level 0, level assigned in later processing
+        entry = Entry()
+        ent_seq_set_x = entry_x.findall('ent_seq')
+        entry.seqid = ent_seq_set_x[0].text
         entry.pub_date = datetime.datetime.now()
         entry.save()
         #get kanji and reading element, kanji element may be empty

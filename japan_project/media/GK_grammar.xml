@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE GKgrammar [
+<!ELEMENT GKgrammar (entry*)>
+<!--                                                                   -->
+<!ELEMENT entry (ent_seq, name, jlpt, level, summary, description*, formula+ )>
+	<!-- Grammar Entries consist of ...
+	-->
+<!ELEMENT ent_seq (#PCDATA)>
+	<!-- A unique numeric sequence number for each grammar entry
+	-->
+<!ELEMENT name (#PCDATA)>
+	<!-- A unique name identifying the title of the Grammar Pattern 
+	-->
+
+<!ELEMENT summary (#PCDATA)>
+	<!-- A short text summarized description of the Grammar Pattern
+	-->
+
+<!ELEMENT description (#PCDATA)>
+	<!-- A more detailed description of the Grammar Pattern
+	-->
+
+<!ELEMENT jlpt (#PCDATA)>
+	<!--  JLPT Level N5, N4, N3, N2, N1, N1+ -->
+
+<!ELEMENT level (#PCDATA)>
+	<!--  Sublevel within JLPT Level 0-100? JLPT Level N5, N4, N3, N2, N1, N1+ -->
+
+<!ELEMENT formula (fname, pitem* )>
+	<!-- Grammar Formula Based on Pattern Items Dictionary
+	-->
+<!ELEMENT pitem (#PCDATA)>
+	<!-- this element content is restricted to kana and related
+	characters such as chouon and kurikaeshi. Kana usage will be
+	consistent between the keb and reb elements; e.g. if the keb
+	contains katakana, so too will the reb.
+	-->
+
+<!-- The following entity codes are used for common elements within the
+various information fields.
+-->
+<!-- TODO: Use ENTITY to define all Grammar Items -->
+<!ENTITY NOUN "Noun">
+<!ENTITY I_ADJ "I-Adjective">
+<!ENTITY NA_ADJ "NA-Adjective">
+<!ENTITY NARU "Naru">
+<!ENTITY NI "Ni">
+<!ENTITY HA "Ha">
+<!ENTITY DESU "~Desu">
+<!ENTITY TOPIC "Topic of a sentence">
+<!ENTITY OBJECT "Object of a sentence">
+]>
+<!-- GKgrammar created: 2017-10-27 -->
+<GKgrammar>
+
+<entry>
+<ent_seq>10000</ent_seq>
+<name>~は</name>
+<jlpt>5</jlpt>
+<level>1</level>
+<summary>Topic marker (also shown as 'wa')</summary>
+<description>
+The particle は marks the topic of a Sentence. 
+The topic can be a simple Noun, or another nested Sentence.
+</description>
+<note>
+Note that when はis used as a particle in a sentence it is pronounced as [wa]
+</note>
+<formula>
+<fname>A は</fname>
+<pitem>&TOPIC;</pitem>
+<pitem>&HA;</pitem>
+</formula>
+</entry>
+<entry>
+
+<ent_seq>10001</ent_seq>
+<name>A ~は B ~です。</name>
+<jlpt>5</jlpt>
+<level>1</level>
+<summary>Stating that A is B</summary>
+<description>Stating that A is B. Where A is the Topic of the sentence, which can be something, someone or a situation, and B can be another Noun or an Adjective</description>
+<description>
+The Particle は marks the Topic of a Sentence. ～です functions like the English verb "is ( to be)", essentially stating "A is B"."
+</description>
+<note>
+Note that when はis used as a particle in a sentence it is pronounced as [wa]
+</note>
+<formula>
+<fname>A ~は B ~です。</fname>
+<pitem>&TOPIC;</pitem>
+<pitem>&HA;</pitem>
+<pitem>&OBJECT;</pitem>
+<pitem>&DESU;</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10002</ent_seq>
+<name>で</name>
+<jlpt>5</jlpt>
+<level>1</level>
+<summary>By means of, by, [action] at a place</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10003</ent_seq>
+<name>に/へ</name>
+<jlpt>5</jlpt>
+<level>2</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10004</ent_seq>
+<name>に</name>
+<jlpt>5</jlpt>
+<level>2</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10005</ent_seq>
+<name>を</name>
+<jlpt>5</jlpt>
+<level>3</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10006</ent_seq>
+<name>～ませんか</name>
+<jlpt>5</jlpt>
+<level>3</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10007</ent_seq>
+<name>は</name>
+<jlpt>5</jlpt>
+<level>1</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10008</ent_seq>
+<name>～があります</name>
+<jlpt>5</jlpt>
+<level>4</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10009</ent_seq>
+<name>～がいます</name>
+<jlpt>5</jlpt>
+<level>4</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10010</ent_seq>
+<name>と</name>
+<jlpt>5</jlpt>
+<level>4</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10011</ent_seq>
+<name>～ましょう</name>
+<jlpt>5</jlpt>
+<level>5</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10012</ent_seq>
+<name>～ましょうか</name>
+<jlpt>5</jlpt>
+<level>5</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10013</ent_seq>
+<name>～てください</name>
+<jlpt>5</jlpt>
+<level>5</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10014</ent_seq>
+<name>～てもいいです</name>
+<jlpt>5</jlpt>
+<level>6</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10015</ent_seq>
+<name>～てはいけません</name>
+<jlpt>5</jlpt>
+<level>6</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10016</ent_seq>
+<name>～から</name>
+<jlpt>5</jlpt>
+<level>7</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10017</ent_seq>
+<name>～ている</name>
+<jlpt>5</jlpt>
+<level>7</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10018</ent_seq>
+<name>～にいく</name>
+<jlpt>5</jlpt>
+<level>8</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10019</ent_seq>
+<name>ないでください</name>
+<jlpt>5</jlpt>
+<level>8</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10020</ent_seq>
+<name>～のがすきです</name>
+<jlpt>5</jlpt>
+<level>9</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10021</ent_seq>
+<name>～のがじょうずです</name>
+<jlpt>5</jlpt>
+<level>9</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10022</ent_seq>
+<name>～のがへたです</name>
+<jlpt>5</jlpt>
+<level>10</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10023</ent_seq>
+<name>まだ～ていません</name>
+<jlpt>5</jlpt>
+<level>10</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10024</ent_seq>
+<name>～のほうが～より</name>
+<jlpt>5</jlpt>
+<level>11</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10025</ent_seq>
+<name>～のなかで～がいちばん～</name>
+<jlpt>5</jlpt>
+<level>11</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10026</ent_seq>
+<name>つもりです</name>
+<jlpt>5</jlpt>
+<level>12</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10027</ent_seq>
+<name>～く/ ～になる</name>
+<jlpt>5</jlpt>
+<level>12</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10028</ent_seq>
+<name>stem +たいです</name>
+<jlpt>5</jlpt>
+<level>13</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10029</ent_seq>
+<name>～たり …～たりする</name>
+<jlpt>5</jlpt>
+<level>13</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10030</ent_seq>
+<name>～たことがある</name>
+<jlpt>5</jlpt>
+<level>14</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10031</ent_seq>
+<name>や</name>
+<jlpt>5</jlpt>
+<level>14</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10032</ent_seq>
+<name>～んです</name>
+<jlpt>5</jlpt>
+<level>15</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10033</ent_seq>
+<name>～すぎる</name>
+<jlpt>5</jlpt>
+<level>15</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10034</ent_seq>
+<name>～ほうがいい</name>
+<jlpt>5</jlpt>
+<level>16</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10035</ent_seq>
+<name>ので</name>
+<jlpt>5</jlpt>
+<level>16</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10036</ent_seq>
+<name>～なくちゃいけない</name>
+<jlpt>5</jlpt>
+<level>17</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10037</ent_seq>
+<name>でしょう</name>
+<jlpt>5</jlpt>
+<level>17</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10038</ent_seq>
+<name>～まえに</name>
+<jlpt>5</jlpt>
+<level>18</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+<entry>
+<ent_seq>10039</ent_seq>
+<name>～てから</name>
+<jlpt>5</jlpt>
+<level>18</level>
+<summary>TBD-SUMMARY</summary>
+<description>TBD-DESCRIPTION</description>
+<formula>
+<fname>TBD-FORMULA</fname>
+<pitem>TBD-ITEM</pitem>
+</formula>
+</entry>
+
+
+</GKgrammar>
