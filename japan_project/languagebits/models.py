@@ -83,6 +83,7 @@ class Level(models.Model):
 #Class Kana (level 0)
 #Defines Hiragana and Katakana reading entries
 class Kana(models.Model): 
+    seqid = models.IntegerField(default=0) #TODO: make this a single *key*
     text = models.CharField(max_length=12)
     pronunciation = models.CharField(max_length=12)
     kanaclass = models.IntegerField(choices=KANA_CLASS, default=0)
@@ -114,27 +115,40 @@ class Kana(models.Model):
 
 #Class Kanji
 #Defines single Kanji character, and reading types
-#class Kanji(models.Model): 
-#    name = models.CharField(max_length=140)
-#    text = models.CharField(max_length=12)
-#    description = models.CharField(max_length=200)
-#    #kun_reading
-#    #kon_reading
-#
-#    def __str__(self):
-#        return self.name
-#
-#    def get_name(self):
-#        return self.name
-#
-#    def get_text(self):
-#        return self.text
+class KanjiEntry(models.Model): 
+    seqid = models.IntegerField(default=0) #TODO: make this a single *key*
+    svgid = models.IntegerField(default=0) #this key should match SVGKanji ID
+    name = models.CharField(max_length=140)
+    text = models.CharField(max_length=12)
+    jlptlevel = models.IntegerField(choices=JLPT_LEVELS, default=5)
+    level = models.IntegerField(default=0) # Total of 1-1024
+
+    def __str__(self):
+        return self.name
+
+    def get_name(self):
+        return self.name
+
+    def get_text(self):
+        return self.text
+
+class Kunyomi(models.Model):
+    text = models.CharField(max_length=12)
+    entry = models.ManyToManyField(KanjiEntry) # After creating object,  use kunyomi.add(<KanjiEntry pointer>)
+
+class Onyomi(models.Model):
+    text = models.CharField(max_length=12)
+    entry = models.ManyToManyField(KanjiEntry) # After creating object,  use onyomi.add(<KanjiEntry pointer>)
+
+class KanjiDescription(models.Model):
+    text = models.CharField(max_length=200)
+    entry = models.ManyToManyField(KanjiEntry) # After creating object,  use kanjidescription.add(<KanjiEntry pointer>)
 
 
 #A GrammarPattern can contain multiple PatternFormula entries
 class GrammarEntry(models.Model):
-    text = models.CharField(max_length=140)
     seqid = models.IntegerField(default=0)
+    text = models.CharField(max_length=140)
     jlptlevel = models.IntegerField(choices=JLPT_LEVELS, default=5)
     level = models.IntegerField(default=0) # Total of 1-1024
     summary =  models.CharField(max_length=250) #Simple definition, for entire entry look to dictionary entry definitions
@@ -174,6 +188,7 @@ class PatternItem(models.Model): #Can be POS or MODIFIER
 #Class Vocabulary
 #Defines single Vocabulary entry, following JLPT N5-N1 lists...
 class Vocabulary(models.Model): 
+    seqid = models.IntegerField(default=0) #TODO: make this a single *key*
     text = models.CharField(max_length=140)
     furigana = models.CharField(max_length=140, default="")
     romanji = models.CharField(max_length=140)
