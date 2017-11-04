@@ -136,13 +136,22 @@ class Kunyomi(models.Model):
     text = models.CharField(max_length=12)
     entry = models.ManyToManyField(KanjiEntry) # After creating object,  use kunyomi.add(<KanjiEntry pointer>)
 
+    def __str__(self):
+        return "Kunyomi: " + self.text
+
 class Onyomi(models.Model):
     text = models.CharField(max_length=12)
     entry = models.ManyToManyField(KanjiEntry) # After creating object,  use onyomi.add(<KanjiEntry pointer>)
 
+    def __str__(self):
+        return "Onyomi: " + self.text
+
 class KanjiDescription(models.Model):
     text = models.CharField(max_length=200)
     entry = models.ManyToManyField(KanjiEntry) # After creating object,  use kanjidescription.add(<KanjiEntry pointer>)
+
+    def __str__(self):
+        return "KanjiDescription: " + self.text
 
 
 #A GrammarPattern can contain multiple PatternFormula entries

@@ -132,6 +132,7 @@ def update_kanji(request):
         if error_in_file == False :
             process_kanji_xml_file(file_)
 
+        uploaded_file_url = os.path.join(settings.DATA_ROOT, 'GKkanji.xml')
         return render(request, 'teacher/successful_upload.html', {
             'uploaded_file_url': uploaded_file_url,
             'error_in_file': error_in_file
@@ -627,7 +628,7 @@ def add_kunyomi(entry, kunyomi_set):
         if not kunyomis:
             logger.info("No duplicates detected, Creating a new Onyomi")
             kunyomi = Kunyomi()
-            kunyomi.text = name_x[0].text
+            kunyomi.text = kunyomi_x.text
             kunyomi.save()
             logger.info('ADDED NEW Onyomi: %s' % kunyomi.text)
         else :
@@ -644,7 +645,7 @@ def add_onyomi(entry, onyomi_set):
         if not onyomis:
             logger.info("No duplicates detected, Creating a new Onyomi")
             onyomi = Onyomi()
-            onyomi.text = name_x[0].text
+            onyomi.text = onyomi_x.text
             onyomi.save()
             logger.info('ADDED NEW Onyomi: %s' % onyomi.text)
         else :
@@ -661,13 +662,14 @@ def add_kanji_description(entry, description_set):
         if not descriptions:
             logger.info("No duplicates detected, Creating a new KanjiDescription")
             description = KanjiDescription()
-            description.text = name_x[0].text
+            description.text = description_x.text
             description.save()
             logger.info('ADDED NEW KanjiDescription: %s' % description.text)
         else :
             description = descriptions[0]
             logger.info('WARNING:  Detected a Duplicate KanjiDescription in a KanjiEntry: %s. Ignoring this FormulaEntry' % description.text)
 
+        #check if kanji entry already has this entry pointer?
         description.entry.add(entry) # add entry pointer to list
 
 #Process a GKgrammar file
@@ -693,9 +695,19 @@ def process_kanji_xml_file(xml_file):
         number += 1
         #create the entry
         level_x = 0 #default level 0, level assigned in later processing
-        entry = KanjiEntry()
+        #Check if the KanjiEntry already exists
         ent_seq_set_x = entry_x.findall('ent_seq')
-        entry.seqid = ent_seq_set_x[0].text
+        kanjientries = KanjiEntry.objects.all().filter(seqid = ent_seq_set_x[0].text) #for entry to be duplicate the text must be exactly the same
+        if len(kanjientries) > 1 :
+            logger.info("ERROR: Found multiple KanjiEntries with same seqid in the database ( ent_seq) %s" % ent_seq_set_x[0].text)
+            entry = kanjientries[0] #default to first one found
+        elif  len(kanjientries ) == 1 :
+            entry = kanjientries[0] #load the existing KanjiEntry to check for updates
+            logger.info("UPDATING KANJI ENTRY: Found existing KanjiEntry, with same seqid ( ent_seq) %s" % ent_seq_set_x[0].text)
+        else : #create a new entry..
+            entry = KanjiEntry()
+            entry.seqid = ent_seq_set_x[0].text
+        #blindly update the entry
         name_set_x = entry_x.findall('name')
         entry.name = name_set_x[0].text
         kanji_set_x = entry_x.findall('kanji')
@@ -711,8 +723,11 @@ def process_kanji_xml_file(xml_file):
         onyomi_set = entry_x.findall('onyomi') # Full Description
         kunyomi_set = entry_x.findall('kunyomi') # Full Description
 
-        add_kanji_description(entry, description_set)
-        add_onyomi(entry, onyomi_set)
-        add_kunyomi(entry, kunyomi_set)
+        if len(description_set) >= 1 : 
+            add_kanji_description(entry, description_set)
+        if len(onyomi_set) >= 1 : 
+            add_onyomi(entry, onyomi_set)
+        if len(kunyomi_set) >= 1 : 
+            add_kunyomi(entry, kunyomi_set)
         
     return list_of_entries # return the list of uploaded entries ( KEB/REB )
