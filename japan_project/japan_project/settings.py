@@ -95,6 +95,8 @@ SITE_ID=1 #from `allauth` setup documentation. Allows manytomany association bet
 #Directory to upload media files, pictures, videos
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+DATA_URL = 'data/'
+DATA_ROOT = os.path.join(BASE_DIR, 'data')
 
 #+++++++ Start : Payments App Configuration +++++++++++++++
 PAYMENT_HOST = 'luiseduardo8899.hopto.org:8000'

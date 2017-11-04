@@ -11,5 +11,7 @@ urlpatterns = [
     url(r'update_vocab', views.update_vocab, name='update_vocab'), #update profile
     url(r'upload_grammar', views.upload_grammar, name='upload_grammar'), #update profile
     url(r'update_grammar', views.update_grammar, name='update_grammar'), #update profile
+    url(r'upload_kanji', views.upload_kanji, name='upload_kanji'), #update profile
+    url(r'update_kanji', views.update_kanji, name='update_kanji'), #update profile
     url(r'successful_upload', views.successful_upload, name='successful_upload'), #update profile
 ]

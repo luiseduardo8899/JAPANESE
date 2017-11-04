@@ -22,6 +22,7 @@ import random
 from svgwrite import *
 from cairosvg import svg2png
 import logging #python logging utility
+from django.conf import settings
 
 # Upload Vocabulary in XML format / Follow JMdict format
 
@@ -104,6 +105,41 @@ def create_images(request):
         'user': user,
     }
     return HttpResponse(template.render(context, request))
+
+#Update Kanji List from /media/GK_grammar files:
+def upload_kanji(request):
+    user = get_user(request)
+    if user.is_superuser :
+        template = loader.get_template('teacher/upload_kanji.html')
+        context = {
+            'user': user,
+        }
+    else:
+        template = loader.get_template('teacher/sorry.html')
+        context = {
+            'user': user,
+        }
+    return HttpResponse(template.render(context, request))
+
+#process the XML file from /media/ directory and update the kanji in the database
+def update_kanji(request):
+    user = get_user(request)
+
+    if user.is_superuser :
+        file_ = open(os.path.join(settings.DATA_ROOT, 'GKkanji.xml'))
+
+        error_in_file = False #TODO: Check XML format matches GKgrammar
+        if error_in_file == False :
+            process_kanji_xml_file(file_)
+
+        return render(request, 'teacher/successful_upload.html', {
+            'uploaded_file_url': uploaded_file_url,
+            'error_in_file': error_in_file
+        })
+    else:
+        return render(request, 'teacher/sorry.html', {
+            'message': "Please head back to home page" #TODO: redirect to homepage?
+        })
 
 #Upload GKgrammar XML
 def upload_grammar(request):
@@ -459,6 +495,9 @@ def add_grammar_description(entry, description_set):
         gdescription.entry.add(entry) # add entry pointer to list
     
 
+def symbol_get_description(symbol):
+    return "TBD-Symbol-Description"
+
 #Add all GrammarPattern Elements found in the GrammarEntry
 def add_grammar_formula(entry, formula_set):
     for formula_x in formula_set:
@@ -476,7 +515,8 @@ def add_grammar_formula(entry, formula_set):
                 if not pitems :
                     logger.info("IF DETECTED NO PITEM CREATE NEW ONE" )
                     pitem = PatternItem()
-                    pitem.text = item_x.text
+                    pitem.symbol = item_x.text
+                    pitem.text = symbol_get_description(item_x.text)
                     pitem.save()
                     logger.info('ADDED NEW PatternItem: %s' % pitem.text)
                 else :
@@ -579,32 +619,100 @@ def process_xml_file(xml_file):
         
     return list_of_entries # return the list of uploaded entries ( KEB/REB )
 
+#Add all Kunyomi elements. 
+#Do no duplicate onyomi, so we can easily find kanjis with the same kunyomi readings
+def add_kunyomi(entry, kunyomi_set):
+    for kunyomi_x in kunyomi_set:
+        kunyomis = Kunyomi.objects.all().filter(text = kunyomi_x.text) #for entry to be duplicate the text must be exactly the same
+        if not kunyomis:
+            logger.info("No duplicates detected, Creating a new Onyomi")
+            kunyomi = Kunyomi()
+            kunyomi.text = name_x[0].text
+            kunyomi.save()
+            logger.info('ADDED NEW Onyomi: %s' % kunyomi.text)
+        else :
+            kunyomi = kunyomis[0]
+            logger.info('WARNING:  Detected a Duplicate Onyomi in a KanjiEntry: %s. Ignoring this Onyomi' % kunyomi.text)
 
-#def process_csv_file(csv_file):
-#    list_of_nouns = []
-#    with open(csv_file, encoding='utf-8') as f:
-#        counter = 0
-#        myreader = reader(f, delimiter=';')
-#        for row in myreader:
-#            counter+=1
-#            if counter == 1:
-#                logger.info(  "Processing file %s " %csv_file," row format ",row)
-#            else: #process rows starting in row2
-#                #TODO: check level
-#                #L  = get_level(row[0])
-#                L = Level.objects.get(level=1)
-#                logger.info(  "GOT LEVEL: %s " %L.name)
-#                #TODO: if file contains ROMANJI, compare that to romkan() conversion first
-#                roma = romkan.to_roma(row[1]) # testing automatic conversion
-#                logger.info(  "ROMKAN: romanji: %s " % roma)
-#                n = Noun(level=L, text=row[0], furigana=row[1], romanji=roma, pub_date=timezone.now()  )
-#                n.save()
-#                d = NounDefinition(text=row[2])
-#                d.save()
-#                d.noun.add(n)
-#                logger.info(  "CREATED NOUN ENTRY: %s " %  n.text, n.furigana, n.romanji)
-#                list_of_nouns.append(n)
-#                
-#    #return the list of nouns created and all fields 
-#    #so teacher can see the list of nouns created
-#    return list_of_nouns
+        kunyomi.entry.add(entry) # add entry pointer to list
+
+#Add all Onyomi elements. 
+#Do no duplicate onyomi, so we can easily find kanjis with the same onyomi readings
+def add_onyomi(entry, onyomi_set):
+    for onyomi_x in onyomi_set:
+        onyomis = Onyomi.objects.all().filter(text = onyomi_x.text) #for entry to be duplicate the text must be exactly the same
+        if not onyomis:
+            logger.info("No duplicates detected, Creating a new Onyomi")
+            onyomi = Onyomi()
+            onyomi.text = name_x[0].text
+            onyomi.save()
+            logger.info('ADDED NEW Onyomi: %s' % onyomi.text)
+        else :
+            onyomi = onyomis[0]
+            logger.info('WARNING:  Detected a Duplicate Onyomi in a KanjiEntry: %s. Ignoring this Onyomi' % onyomi.text)
+
+        onyomi.entry.add(entry) # add entry pointer to list
+
+#Add all KanjiDescription elements. 
+#Do no duplicate descriptions, so we can easily find kanjis with the same meaning later on
+def add_kanji_description(entry, description_set):
+    for description_x in description_set:
+        descriptions = KanjiDescription.objects.all().filter(text = description_x.text) #for entry to be duplicate the text must be exactly the same
+        if not descriptions:
+            logger.info("No duplicates detected, Creating a new KanjiDescription")
+            description = KanjiDescription()
+            description.text = name_x[0].text
+            description.save()
+            logger.info('ADDED NEW KanjiDescription: %s' % description.text)
+        else :
+            description = descriptions[0]
+            logger.info('WARNING:  Detected a Duplicate KanjiDescription in a KanjiEntry: %s. Ignoring this FormulaEntry' % description.text)
+
+        description.entry.add(entry) # add entry pointer to list
+
+#Process a GKgrammar file
+def process_kanji_xml_file(xml_file):
+    list_of_entries = []
+    number = 0
+
+    logger2.info('Processing XML File - ')
+    #Main execution code
+    #load the entire GKgrammar XML File 
+    tree = metree.parse(xml_file)
+
+    #get root of the XML File
+    root = tree.getroot()
+
+    #TODO: Check the XML format...
+    logger2.info('TODO: Check XML format  - ')
+
+    #get all entries in the file
+    entries_x = root.findall('kanji_entry')
+    logger.info("Got root %s" % root)
+    for entry_x in entries_x:
+        number += 1
+        #create the entry
+        level_x = 0 #default level 0, level assigned in later processing
+        entry = KanjiEntry()
+        ent_seq_set_x = entry_x.findall('ent_seq')
+        entry.seqid = ent_seq_set_x[0].text
+        name_set_x = entry_x.findall('name')
+        entry.name = name_set_x[0].text
+        kanji_set_x = entry_x.findall('kanji')
+        entry.text = name_set_x[0].text
+        jlpt_set_x = entry_x.findall('jlpt')
+        jlpt_level_set = entry_x.findall('jlpt') # Kanji Element JLPT Level
+        entry.jlptlevel = jlpt_level_set[0].text
+        level_set = entry_x.findall('level') # Sublevel
+        entry.level = jlpt_level_set[0].text
+        entry.save()
+
+        description_set = entry_x.findall('description') # Full Description
+        onyomi_set = entry_x.findall('onyomi') # Full Description
+        kunyomi_set = entry_x.findall('kunyomi') # Full Description
+
+        add_kanji_description(entry, description_set)
+        add_onyomi(entry, onyomi_set)
+        add_kunyomi(entry, kunyomi_set)
+        
+    return list_of_entries # return the list of uploaded entries ( KEB/REB )

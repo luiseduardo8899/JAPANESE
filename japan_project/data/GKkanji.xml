@@ -29,6 +29,7 @@
 <!ELEMENT description (#PCDATA)>
 	<!-- A description of the Kanji Entry ( the meaning )
 	-->
+]>
 
 
 <!-- GKgrammar created: 2017-10-27 -->
@@ -1086,15 +1087,16 @@
 <onyomi>フ</onyomi>	
 <kunyomi>ちち</kunyomi>
 <description>father</description>
+</kanji_entry>
 <kanji_entry>
-<kanji>雨<kanji>
-<name>雨<name>
+<kanji>雨</kanji>
+<name>雨</name>
 <jlpt>5</jlpt>
 <level>1</level>
 <onyomi>ウ</onyomi>
 <kunyomi>あめ</kunyomi>
 <kunyomi>あま-</kunyomi>
 <kunyomi>-さめ</kunyomi>
-<description>rain<description>
+<description>rain</description>
 </kanji_entry>
 </GKkanji>
