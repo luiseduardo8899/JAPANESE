@@ -1,0 +1,14 @@
+{% extends "account/base.html" %}
+{% load static %}
+
+{% block content %}
+<br>
+<br>
+<h1>Update the KanjiEntries</h1>
+<h2>* Make sure your XML file follows the GKgrammar format *</h2>
+<hr>
+<form action="teacher/update_kanji">
+<input type="submit" class="btn btn-default btn-lg" value="Update KanjiEntries based on XML on /data/"></input>
+</form>
+
+{% endblock %}
