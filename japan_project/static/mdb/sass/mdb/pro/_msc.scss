@@ -1,104 +1,102 @@
 // Miscellaneous
 
 // Advanced tables
-
 .table {
-    a {
-        margin-left: 1rem;
+  a {
+    margin-left: 1rem;
+  }
+  fieldset {
+    margin-bottom: 0;
+    label {
+      height: 8px;
     }
-    fieldset {
-        margin-bottom: 0;
-        label {
-            height: 8px;
-        }
-    }
+  }
     
 }
+
 // Product table
 .product-table {
-    img {
-        max-height: 150px;
-        min-width: 50px;
-    }
-    td {
-        vertical-align: middle;
-    }
+  img {
+    max-height: $product-table-img-max-height;
+    min-width: $product-table-img-min-width;
+  }
+  td {
+    vertical-align: middle;
+  }
 }
 
-// Inline list with images
-
-.inline-ul-img {
-    li {
-        display: inline;
-        img {
-            max-width: 100px;
-            @extend .z-depth-1-half;
-            margin: 8px;
-        }
-    }
+// hide default radio / checkbox
+%hide-radio-checkbox {
+  position: absolute;
+  left: -9999px;
+  visibility: hidden;
 }
 
-// stripes
+%base-radio-checkbox-label {
+  position: relative;
+  padding-left: 35px;
+  cursor: pointer;
+  display: inline-block;
+  height: 25px;
+  line-height: 25px;
+  font-size: 1rem;
+  /* webkit (safari, chrome) browsers */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  /* mozilla browsers */
+  /* webkit (konqueror) browsers */
+  -khtml-user-select: none;
+  /* IE10+ */
+  -ms-user-select: none;
+}
 
 .streak {
-    display:block;
-    position:relative;
-    overflow:hidden;
-    background:#e5e5e5;
-    height:250px;
-    &.streak-lg {
-        height:400px;
+  display: block;
+  position: relative;
+  overflow: hidden;
+  height: 250px;
+  &.streak-md {
+    height: 400px;
+    @media (max-width: 736px) {
+      height: 300px;
     }
-    &.streak-photo {
-        @include background-size(cover);
-        background-position:center;
-        background-attachment: fixed;
-        background-repeat:no-repeat;
+  }
+  &.streak-lg {
+    height: 650px;
+    @media (max-width: 450px) {
+      height: 900px;
     }
-    &.no-flex {
-        padding-top:3.125rem;
-        padding-bottom:3.125rem;
-        height:auto;
+  }
+  &.streak-long {
+    height: 200px;
+    @media (max-width: 450px) {
+      height: 620px;
     }
-    .flex-center {
-        ul {
-            margin-bottom: 0;
-            li {
-                &:last-child {
-                    margin-bottom: 0;
-                }
-                h1, h2, h3, h4, h5 {
-                    margin-bottom: 0;
-                }
-            }
-        }
+  }
+  &.streak-long-2 {
+    height: 400px;
+    @media (max-width: 450px) {
+      height: 700px;
     }
-    &.streak-photo { 
-        @media (max-width: 1025px) {
-            background-repeat: repeat;
-        }
-        @media (max-width: 415px) {
-            height: 250px;
-            background-size: 180%;
-        }
-        @media (min-width: 416px) and (max-width: 1025px) {
-           -webkit-background-size: 100%;
-            background-size: 100%;
-        }
+  }
+  &.streak-photo {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    @media (min-width: 1366px) {
+      background-attachment: fixed;
     }
+  }
+  &.no-flex {
+    padding-top: 3.125rem;
+    padding-bottom: 3.125rem;
+    height: auto;
+  }
 }
 
-// boxed gallery
-
-.boxed-gallery {
-    .col-md-6, .col-md-3 {
-        padding: 0.36rem 0.5rem;
-    }
-    &.right-aligned {
-        @media (min-width: 768px) {
-            .col-md-6, .col-md-3 {
-                float: right;
-            }
-        }
-    }
+// Gradients Premium
+@each $name, $val in $gradients-premium {
+  .#{$name}-gradient {
+    background: linear-gradient(40deg, map-get($val, start), map-get($val, end));
+  }
 }

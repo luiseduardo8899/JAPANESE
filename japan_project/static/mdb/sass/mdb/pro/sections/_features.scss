@@ -1,26 +1,23 @@
 // Features
-
-// Feature box
 .feature-box {
-    text-align: center;
-   
+  text-align: center;
+  .feature-title {
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+  .features-big {
     .feature-title {
-        font-weight: 500;
-        margin-bottom: 1rem;
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
     }
-    .features-big {
-        .feature-title {
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-        }
-        .fa {
-            font-size: 4rem;
-        }
+    .fa {
+      font-size: 4rem;
     }
-    .features-small {
-        text-align: left;
-        .fa {
-            font-size: 2rem;
-        }
+  }
+  .features-small {
+    text-align: left;
+    .fa {
+      font-size: 2rem;
     }
+  }
 }

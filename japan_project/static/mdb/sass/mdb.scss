@@ -1,23 +1,23 @@
 /*!
  * Material Design for Bootstrap 4
- * Version: MDB Pro 4.3.2
+ * Version: MDB PRO 4.4.3
  *
  *
  * Copyright: Material Design for Bootstrap
- * http://mdbootstrap.com/
+ * https://mdbootstrap.com/
  *
- * Read the license: http://mdbootstrap.com/license/
+ * Read the license: https://mdbootstrap.com/license/
  *
  *
- * Documentation: http://mdbootstrap.com/
+ * Documentation: https://mdbootstrap.com/
  *
- * Getting started: http://mdbootstrap.com/getting-started/
+ * Getting started: https://mdbootstrap.com/getting-started/
  *
- * Tutorials: http://mdbootstrap.com/bootstrap-tutorial/
+ * Tutorials: https://mdbootstrap.com/bootstrap-tutorial/
  *
- * Templates: http://mdbootstrap.com/templates/
+ * Templates: https://mdbootstrap.com/templates/
  *
- * Support: http://mdbootstrap.com/forums/forum/support/
+ * Support: https://mdbootstrap.com/support/
  *
  * Contact: office@mdbootstrap.com 
  *
@@ -27,72 +27,89 @@
 
 @charset "UTF-8";
 
-// MDB Framework //
+// Bootstrap //
 
-// Mixins
+@import "mdb/free/data/functions";
+@import "mdb/free/data/variables-b4";
+
+// MDB Framework //
 @import "mdb/free/data/prefixer";
 @import "mdb/free/data/mixins";
-
-// Variables
 @import "mdb/free/data/colors";
-@import "mdb/free/data/variables-b4";
 @import "mdb/free/data/variables";
-
-//Global
 @import "mdb/free/global";
-
-// MDB Free  
-@import "mdb/free/roboto";
-@import "mdb/free/typography";
 @import "mdb/free/animations";
-@import "mdb/free/waves";
 @import "mdb/free/helpers";
+@import "mdb/free/typography";
 @import "mdb/free/buttons";
-@import "mdb/free/forms-basic";
 @import "mdb/free/cards-basic";
-@import "mdb/free/navbars";
-@import "mdb/free/hover-effects";
-@import "mdb/free/footer";
-@import "mdb/free/carousels-basic";
+@import "mdb/free/dropdowns";
+@import "mdb/free/navbar";
+@import "mdb/free/pagination";
+@import "mdb/free/badge";
+@import "mdb/free/breadcrumb";
 @import "mdb/free/modals";
+@import "mdb/free/progress";
+@import "mdb/free/carousel-basic";
+@import "mdb/free/collapse";
+@import "mdb/free/jumbotron";
+@import "mdb/free/masks";
+@import "mdb/free/waves";
+@import "mdb/free/forms-basic";
+@import "mdb/free/msc";
+@import "mdb/free/footer";
+@import "mdb/free/list-group";
+@import "mdb/free/tables";
 
-// MDB Premium
-@import "mdb/pro/forms-pro";
-@import "mdb/pro/tabs";
-@import "mdb/pro/msc";
-@import "mdb/pro/progress";
-@import "mdb/pro/accordion";
+@import "mdb/pro/variables-pro";
+@import "mdb/free/deprecated";
+@import "mdb/pro/deprecated";
 @import "mdb/pro/buttons-pro";
 @import "mdb/pro/social-buttons";
+@import "mdb/pro/tabs";
 @import "mdb/pro/cards-pro";
 @import "mdb/pro/dropdowns-pro";
-@import "mdb/pro/light-box";
-@import "mdb/pro/side-nav";
 @import "mdb/pro/navbars-pro";
-@import "mdb/pro/carousels-pro";
-@import "mdb/pro/modals-pro";
-@import "mdb/pro/toasts";
 @import "mdb/pro/scrollspy";
-@import "mdb/pro/charts-pro";
-@import "mdb/pro/animations-pro";
-@import "mdb/pro/scrollbar";
-@import "mdb/pro/ecommerce";
-@import "mdb/pro/skins"; 
+@import "mdb/pro/light-box";
 @import "mdb/pro/chips";
+@import "mdb/pro/msc";
+@import "mdb/pro/radio";
+@import "mdb/pro/checkbox";
+@import "mdb/pro/material-select";
+@import "mdb/pro/switch";
+@import "mdb/pro/file-input";
+@import "mdb/pro/range";
+@import "mdb/pro/input-group";
+@import "mdb/pro/autocomplete";
 @import "mdb/pro/parallax";
+@import "mdb/pro/side-nav";
+@import "mdb/pro/ecommerce";
+@import "mdb/pro/carousels-pro";
 @import "mdb/pro/stepper";
+@import "mdb/pro/blog";
+@import "mdb/pro/toasts";
+@import "mdb/pro/animations-pro";
+@import "mdb/pro/charts-pro";
+@import "mdb/pro/progress";
+@import "mdb/pro/scrollbar";
+@import "mdb/pro/skins";
 
-// DATE & TIME PICKERS 
 @import "mdb/pro/date_picker/default";
-@import "mdb/pro/date_picker/default.date";
 @import "mdb/pro/date_picker/default.time";
+@import "mdb/pro/date_picker/default.date";
 
-// SECTIONS
+@import "mdb/pro/sections";
+@import "mdb/pro/sections/templates";
+@import "mdb/pro/sections/features";
+@import "mdb/pro/sections/social";
 @import "mdb/pro/sections/blog";
+@import "mdb/pro/sections/team";
+@import "mdb/pro/sections/testimonials";
+@import "mdb/pro/sections/projects";
 @import "mdb/pro/sections/magazine";
 @import "mdb/pro/sections/pricing";
-@import "mdb/pro/sections/testimonials";
-@import "mdb/pro/sections/features";
-@import "mdb/pro/sections/team";
-@import "mdb/pro/sections/templates";
-@import "mdb/pro/sections/social";
+@import "mdb/pro/sections/contacts";
+
+// Custom Sass
+@import "mdb/custom";

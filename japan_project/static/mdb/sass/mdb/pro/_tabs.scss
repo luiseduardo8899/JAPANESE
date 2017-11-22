@@ -1,241 +1,131 @@
-// TABS
+//Navs, Tabs and Pills
 .nav-tabs {
+  border: 0;
+  padding: $tabs-padding;
+  margin-left: $tabs-margin-x;
+  margin-right: $tabs-margin-x;
+  margin-bottom: $tabs-margin-y;
+  background-color: $default-color;
+  z-index: 2;
+  position: relative;
+  @include border-radius(2px);
+  @extend .z-depth-1-half;
+  .nav-item + .nav-item {
+    margin-left: 0;
+  }
+  .nav-link {
     border: 0;
-    padding: 0.7rem;
-    margin-left: 1rem;
-    margin-right: 1rem;
-    margin-bottom: -20px;
-    z-index: 2;
-    position: relative;
-    @extend .z-depth-2;
-    .nav-item + .nav-item {
-        margin-left: 0;
-    }
-    .nav-link {
-        border: 0;
-        color: #fff;
-    }
+    color: $white;
+  }
 }
 
 .nav-tabs {
-    .nav-link.active,
-    .nav-item.open .nav-link {
-        @include plain-hover-focus {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: #fff;
-            @include transition(all 1s);
-            @include border-radius(2px);
-        }
-    }
+  .nav-link.active,
+  .nav-item.open .nav-link {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    @include transition(all 1s);
+    @include border-radius(2px);
+  }
+  .nav-link.dropdown-toggle,
+  .nav-item.show .nav-link {
+    background-color: $default-color;
+    color: #fff;
+    @include transition(all 1s);
+    @include border-radius(2px);
+  }
 }
 
 .md-pills {
-    @extend .z-depth-0;
-    li {
-        padding: 10px;
+  border: 0;
+  li {
+    padding: $pills-padding;
+  }
+  .nav-link {
+    @include transition(all 0.4s);
+    @include border-radius(2px);
+    color: #666;
+    text-align: center;
+    &:hover {
+      background-color: $rgba-grey-light;
     }
-    .nav-link {
-        color: #666;
-        text-align: center;
+    &.active {
+      color: $white; //comment because when we have background color white, we didnt see a
+      @extend .z-depth-1;
+      background-color: $default-color;
     }
-    .nav-item .nav-link {
-        @include border-radius(2px);
-        &:hover {
-            background-color: $rgba-grey-light;
-            @include transition(all 0.4s);
-        }
+    &.active:hover {
+      @extend .z-depth-1-half;
+    }
+  }
+}
+
+@each $name, $color in $material-colors {
+  .pills-#{$name} {
+    .nav-item {
+      .nav-link {
         &.active {
-            color: #fff;
-            @extend .z-depth-1-half;
-            @include border-radius(2px);
-            @include transition(all 0.4s);
+          background-color: $color;
         }
+      }
     }
-    &.pills-primary {
-        .nav-item .nav-link {
-            &.active {
-                background-color: $primary-color;
-            }
-        }
-    }
-    &.pills-danger {
-        .nav-item .nav-link {
-            &.active {
-                background-color: $danger-color-dark;
-            }
-        }
-    }
-    &.pills-default {
-        .nav-item .nav-link {
-            &.active {
-                background-color: $default-color;
-            }
-        }
-    }
-    &.pills-secondary {
-        .nav-item .nav-link {
-            &.active {
-                background-color: $secondary-color;
-            }
-        }
-    }
-    &.pills-success {
-        .nav-item .nav-link {
-            &.active {
-                background-color: $success-color;
-            }
-        }
-    }
-    &.pills-info {
-        .nav-item .nav-link {
-            &.active {
-                background-color: $info-color;
-            }
-        }
-    }
-    &.pills-warning {
-        .nav-item .nav-link {
-            &.active {
-                background-color: $warning-color-dark;
-            }
-        }
-    }
-    &.pills-ins {
-        .nav-item .nav-link {
-            &.active {
-                background-color: $ins-color;
-            }
-        }
-    }
+  }
+  .tabs-#{$name} {
+    background-color: $color;
+  }
 }
 
 .tab-content {
-    padding: 1rem;
-    padding-top: 2rem;
-    z-index: 1;
-    &.vertical {
-        padding-top: 0;
-    }
-}
-
-.tabs-5 li {
-    width: 20%;
-    margin-left: 0;
-}
-
-.tabs-4 li {
-    width: 25%;
-}
-
-.tabs-3 li {
-    width: 33.3%;
-}
-
-.tabs-2 li {
-    width: 50%;
-}
-
-.tabs-5,
-.tabs-4,
-.tabs-3,
-.tabs-2 {
-    text-align: center;
-}
-
-// Classic tabs
-.tabs-wrapper {
-    overflow-x: hidden;
+  padding: 1rem;
+  padding-top: 2rem;
+  z-index: 1;
+  border-radius: 0 0 0.3rem 0.3rem;
+  &.vertical {
+    padding-top: 0;
+  }
 }
 
 .classic-tabs {
-    @include flexbox()
-    white-space: nowrap;
-    overflow-x:auto;
-    @media (min-width: 62rem) {
-        overflow-x:hidden;
+  @include flexbox();
+  white-space: nowrap;
+  overflow-x: auto;
+  border-radius: 0.3rem 0.3rem 0 0;
+  @media (min-width: 62rem) {
+    overflow-x: hidden;
+  }
+  li {
+    @include flex(1 0 30%);
+    @media (min-width: 62em) {
+      flex:inherit;
     }
-    li {
-        @include flex(1 0 30%);
-        @media (min-width: 62em) {
-            flex:inherit;
-        }
+    a {
+      display: block;
+      padding: $classic-tabs-padding-y $classic-tabs-padding-x;
+      font-size: $classic-tabs-font-size;
+      text-transform: uppercase;
+      color: $classic-tabs-color;
+      text-align: center;
+      border-radius: 0;
+      &.active {
+        border-bottom: 3px solid;
+        color: $white;
+      }
+    }
+    @media (min-width: 62em) {
+      &:first-child {
+        margin-left: $classic-tabs-margin-left;
+      }           
+    }
+  }
+  @each $name, $color in $ctbc {
+    &.#{$name} {
+      li {
         a {
-            display:block;
-            padding:20px 24px;
-            font-size:13px;
-            text-transform:uppercase;
-            color:rgba(255,255,255,.7);
-            text-align:center;
-            border-radius:0;
-            &.active {
-                border-bottom:3px solid #ffeb3b;
-                color:#fff;
-            }
+          &.active {
+            border-color: $color;
+          }
         }
-        @media (min-width: 62em) {
-            &:first-child {
-                margin-left:56px;
-            }           
-        }
+      }
     }
-    &.tabs-grey {
-        background-color:#546e7a;
-        li {
-            a {
-                &.active {
-                    border-color:#fff;
-                }
-            }
-        }
-    }
-    &.tabs-cyan {
-        background-color:#00bcd4;
-        li {
-            a {
-                &.active {
-                    border-color:#ffeb3b;
-                }
-            }
-        }
-    }
-    &.tabs-pink {
-        background-color:#ec407a;
-        li {
-            a {
-                &.active {
-                    border-color:#673ab7;
-                }
-            }
-        }
-    }
-    &.tabs-orange {
-        background-color:#ffa000;
-        li {
-            a {
-                &.active {
-                    border-color:#e53935;
-                }
-            }
-        }
-    }
-    &.tabs-green {
-        background-color:#7cb342;
-        li {
-            a {
-                &.active {
-                    border-color:#1565c0;
-                }
-            }
-        }
-    }
-    &.tabs-primary {
-        background-color:#4285F4;
-        li {
-            a {
-                &.active {
-                    border-color:#fff;
-                }
-            }
-        }
-    }
+  }
 }

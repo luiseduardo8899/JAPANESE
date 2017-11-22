@@ -1,10 +1,7 @@
-// Animations pro
-.rotate-element {
-    @include transform (rotate(180deg));
-}
-
-.fa-angle-down {
-    &.rotate-icon {
-        @include transition (all 150ms ease-in 0s);
-    }
+// Animations Pro
+.collapsible .active {
+  .rotate-icon {
+    transform: rotate(180deg);
+    transition: all 150ms ease-in 0s;
+  }
 }
