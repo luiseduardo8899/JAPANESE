@@ -1,0 +1,37 @@
+{% extends "account/base.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="fullscreen-bg">
+<video loop autoplay  class="fullscreen-bg__video">
+</video>
+</div>
+<h1>Create WEBRTC Videos for Katakana/Hiragana and Vocabulary/Grammar Entries </h1>
+<h2>Smile! </h2>
+
+
+<script>
+  var errorCallback = function(e) {
+    console.log('Rejected!', e);
+  };
+    navigator.getUserMedia  = navigator.getUserMedia ||
+                              navigator.webkitGetUserMedia ||
+                              navigator.mozGetUserMedia ||
+                              navigator.msGetUserMedia;
+    
+    var video = document.querySelector('video');
+    
+    if (navigator.getUserMedia) {
+      navigator.getUserMedia({audio: true, video: true}, function(stream) {
+        video.src = window.URL.createObjectURL(stream);
+      }, errorCallback);
+    } else {
+      video.src = 'https://www.youtube.com/watch?v=f5_kzZD46AY&list=PLINFE8v4DOhuHjElR2LXixfqKKnlXoq92'; // fallback.
+    }
+
+   //TODO:::  capture video and download to user computer + save to server side TODO //
+
+</script>
+
+{% endblock %}

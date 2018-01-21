@@ -5,7 +5,7 @@
 
 {% if uploaded_file_url %}
 <h1><p style="color:green" > File was succesfully uploaded!  Coffee Time!  </p></h1>
-<p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
+<p>Download file here: <a href="/{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
   {% if error_in_file == True %}
   <h1><p style="color:red" > Error in File format! </p></h1>
   {% endif %}

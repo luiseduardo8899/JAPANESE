@@ -10,7 +10,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Bootstrap core CSS -->
     <link href="{% static "mdb/css/bootstrap.css" %}" rel="stylesheet">
     <!-- Material Design Bootstrap -->
@@ -32,16 +32,17 @@
 
 <body>
 <!--TOP GOKOKAN NAVBARi -->
-<nav class="navbar navbar-toggleable-md navbar-light white bg-primary ">
+<nav class="navbar navbar-expand-lg navbar-light blue-grey lighten-5">
+
     <div class="container">
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav1" aria-controls="navbarNav1" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="/search" <strong>GOKOKAN</strong></a>
+        <a class="navbar-brand" href="/dictionary/index/" <strong>GOKOKAN</strong></a>
         <div class="collapse navbar-collapse" id="navbarNav1">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item ">
-                    <a class="nav-link" href="/search"><i class="fa fa-home fa-lg" aria-hidden="true"></i>Home<span class="sr-only"></span></a>
+                    <a class="nav-link" href="/dictionary/index/"><i class="fa fa-home fa-lg" aria-hidden="true"></i>Home<span class="sr-only"></span></a>
                 </li>
             </ul>
             <form class="form-inline waves-effect waves-light"  action="/search" method="get">
@@ -69,13 +70,12 @@
 
     <!-- SCRIPTS -->
     <!-- JQuery -->
-    <script type="text/javascript" src="{% static "mdb/js/jquery-3.1.1.js" %}" ></script>
-    <!-- Bootstrap tooltips -->
-    <script type="text/javascript" src="{% static "mdb/js/tether.js" %}" ></script>
+    <script type="text/javascript" src="{% static "mdb/js/jquery-3.2.1.js" %}" ></script>
     <!-- Bootstrap core JavaScript -->
     <script type="text/javascript" src="{% static "mdb/js/bootstrap.js" %}" ></script>
     <!-- MDB core JavaScript -->
     <script type="text/javascript" src="{% static "mdb/js/mdb.js" %}" ></script>
+    <script type="text/javascript" src="{% static "mdb/js/popper.min.js"%}"></script>
 </body>
 
 </html>

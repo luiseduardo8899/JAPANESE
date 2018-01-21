@@ -11,15 +11,52 @@
 
     <h1 class="animated fadeIn mb-2" >{% trans "Sign Up" %}</h1>
     <h4 class="animated fadeIn mb-2" >{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</h4>
+    <br><br>
+
+<!-- Form register -->
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
     <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
       {% csrf_token %}
-      {{ form.as_p }}
+
+    {{ form.non_field_errors }}
+    <div class="md-form">
+        <i class="fa fa-user prefix grey-text"></i>
+        {{ form.username.errors }}
+        {{ form.username }}
+        <label for="{{ form.username.id_for_label }}">Username</label>
+    </div>
+    <div class="md-form">
+        <i class="fa fa-envelope prefix grey-text"></i>
+        {{ form.email.errors }}
+        {{ form.email }}
+        <label for="{{ form.email.id_for_label }}">Your email</label>
+    </div>
+
+    <div class="md-form">
+        <i class="fa fa-lock prefix grey-text"></i>
+        {{ form.password1.errors }}
+        {{ form.password1 }}
+        <label for="{{ form.password1.id_for_label }}">Your password</label>
+    </div>
+
+    <div class="md-form">
+        <i class="fa fa-lock prefix grey-text"></i>
+        {{ form.password2.errors }}
+        {{ form.password2 }}
+        <label for="{{ form.password2.id_for_label }}">Your password</label>
+    </div>
+
+    <div class="text-center">
       {% if redirect_field_value %}
       <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
       {% endif %}
-      <button type="submit" class="btn btn-unique btn-lg btn-block">{% trans "Sign Up" %} &raquo;</button>
-    </form>
+        <button type="submit" class="btn btn-deep-orange">Sign up</button>
+    </div>
+</form>
+<!-- Form register -->
+
+
 
 </div>
 </div>

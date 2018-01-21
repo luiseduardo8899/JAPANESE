@@ -13,19 +13,25 @@ from django.core.mail import send_mail
 
 # Search Dictionary View #TODO :define a new index page for dictionary
 def index(request):
-    # Redirect to Homepage if user is not signed in
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('account/login/')
-
-    #method_decorator(login_required) #<<< TODO: Check why decorator did not work
     user = get_user(request) #include here if user not logged in
-    stats = get_stats(user)
-    latest_noun_list = Entry.objects.order_by('-pub_date')[:50]
-    template = loader.get_template('dictionary/search.html')
+    #stats = get_stats(user)
+    stats = 0 
+    template = loader.get_template('splash/splash.html')
     context = {
         'user' : user,
         'stats' : stats,
-        'latest_noun_list': latest_noun_list,
+    }
+    return HttpResponse(template.render(context, request))
+
+# Search Dictionary View #TODO :define a new index page for dictionary
+def languageguide(request):
+    user = get_user(request) #include here if user not logged in
+    #stats = get_stats(user)
+    stats = 0 
+    template = loader.get_template('splash/guide.html')
+    context = {
+        'user' : user,
+        'stats' : stats,
     }
     return HttpResponse(template.render(context, request))
 

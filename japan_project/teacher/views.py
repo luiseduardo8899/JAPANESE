@@ -23,6 +23,12 @@ from svgwrite import *
 from cairosvg import svg2png
 import logging #python logging utility
 from django.conf import settings
+from pptx import Presentation
+from pptx.enum.shapes import MSO_SHAPE
+from pptx.util import Inches, Pt
+from pptx.dml.color import RGBColor
+
+
 
 # Upload Vocabulary in XML format / Follow JMdict format
 
@@ -32,6 +38,108 @@ logger = logging.getLogger('/home/luis/dictionaryViewsLogger.log')
 logger2 = logging.getLogger('/home/luis/dictionaryViewsLogger2.log')
 #namesapce required for xml:lang in lsource
 nsmap = {"xml": "http://www.w3.org/XML/1998/namespace"}
+
+def create_videos(request):
+    error_in_file = False #TODO: Check PPTX creation worked
+    return render(request, 'teacher/create_videos.html', {
+        'error_in_file': error_in_file
+    })
+
+def create_powerpoint(request):
+    prs = Presentation()
+    title_slide_layout = prs.slide_layouts[0]
+    slide = prs.slides.add_slide(title_slide_layout)
+    title = slide.shapes.title
+    subtitle = slide.placeholders[1]
+    COLOR1 = RGBColor(0x2B, 0xD6, 0xAB)
+    COLOR2 = RGBColor(0xE6, 0xD7, 0x2E)
+    COLOR3 = RGBColor(0xF5, 0x4E, 0x30)
+    BLACK1 = RGBColor(0x00, 0x00, 0x00)
+    WHITE1 = RGBColor(0xFF, 0xFF, 0xFF)
+    
+    title.text = "GOKOKAN"
+    subtitle.text = "Online Language Learning"
+
+    slide = prs.slides.add_slide(title_slide_layout)
+    title = slide.shapes.title
+    subtitle = slide.placeholders[1]
+    title.text = "Hello, World!"
+    subtitle.text = "Online Language Learning"
+
+    #Add a shape
+    shapes = slide.shapes
+    left = top = width = height = Inches(1.0)
+    shape = shapes.add_shape( MSO_SHAPE.RECTANGLE, left, top, width, height)
+    fill = shape.fill
+    fill.solid()
+    fill.fore_color.rgb = COLOR1
+    line = shape.line
+    line.fill.background() #make it invisible
+    text_frame = shape.text_frame
+    text_frame.clear()
+    p = text_frame.paragraphs[0]
+    run = p.add_run()
+    run.text = "A"
+    font = run.font
+    font.name = 'Calibri'
+    font.size = Pt(60)
+    font.bold = True
+    font.italic = None  # cause value to be inherited from theme
+    font.color.rgb = BLACK1
+
+
+    width = height = Inches(1.0)
+    left = top = Inches(2.0)
+    shape = shapes.add_shape( MSO_SHAPE.RECTANGLE, left, top, width, height)
+    fill = shape.fill
+    fill.solid()
+    fill.fore_color.rgb = COLOR2
+    line = shape.line
+    line.fill.background() #make it invisible
+    text_frame = shape.text_frame
+    text_frame.clear()
+    p = text_frame.paragraphs[0]
+    run = p.add_run()
+    run.text = "B"
+    font = run.font
+    font.name = 'Calibri'
+    font.size = Pt(60)
+    font.bold = True
+    font.italic = None  # cause value to be inherited from theme
+    font.color.rgb = WHITE1
+
+    #TODO: Continuar AQUI -> Convertir en una funcion!
+    #TODO: Medir el texto? Ratio text size to shape width/height?
+    height = Inches(1.0)
+    width = Inches(8.0)
+    left = Inches(1.0)
+    top = Inches(4.0)
+    shape = shapes.add_shape( MSO_SHAPE.RECTANGLE, left, top, width, height)
+    fill = shape.fill
+    fill.solid()
+    fill.fore_color.rgb = COLOR3
+    line = shape.line
+    line.fill.background() #make it invisible
+    text_frame = shape.text_frame
+    text_frame.clear()
+    p = text_frame.paragraphs[0]
+    run = p.add_run()
+    run.text = "ありがとうございます！"
+    font = run.font
+    font.name = 'Calibri'
+    font.size = Pt(50)
+    font.bold = True
+    font.italic = None  # cause value to be inherited from theme
+    font.color.rgb = WHITE1
+
+    prs.save('static/hello.pptx')
+
+    error_in_file = False #TODO: Check PPTX creation worked
+    return render(request, 'teacher/successful_upload.html', {
+        'uploaded_file_url': "static/hello.pptx",
+        'error_in_file': error_in_file
+    })
+
 
 def create_images(request):
     user = get_user(request)
