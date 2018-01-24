@@ -23,6 +23,18 @@ def index(request):
     }
     return HttpResponse(template.render(context, request))
 
+# List of Videos
+def videolist(request):
+    user = get_user(request) #include here if user not logged in
+    #stats = get_stats(user)
+    stats = 0 
+    template = loader.get_template('splash/videolist.html')
+    context = {
+        'user' : user,
+        'stats' : stats,
+    }
+    return HttpResponse(template.render(context, request))
+
 # Search Dictionary View #TODO :define a new index page for dictionary
 def languageguide(request):
     user = get_user(request) #include here if user not logged in
