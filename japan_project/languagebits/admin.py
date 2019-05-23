@@ -1,9 +1,10 @@
 from django.contrib import admin
-from languagebits.models import Kana, Vocabulary, GrammarEntry, GrammarDescription, PatternFormula, PatternItem, KanjiEntry, KanjiDescription, Onyomi, Kunyomi
+from languagebits.models import *
 
 # Register your models here.
 admin.site.register(Kana)
 admin.site.register(Vocabulary)
+admin.site.register(LangDefinition)
 admin.site.register(GrammarEntry)
 admin.site.register(GrammarDescription)
 admin.site.register(PatternFormula)

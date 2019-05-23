@@ -1,4 +1,4 @@
-from languagebits.models import Kana, GrammarEntry, KanjiEntry
+from languagebits.models import Kana, GrammarEntry, KanjiEntry, Vocabulary
 from random import *
 from django.http import HttpResponseRedirect, HttpResponse
 from django.http import Http404
@@ -21,6 +21,14 @@ def get_grammar_by_id(grammar_id):
         raise Http404("Gomenazai~~~ GrammarEntry  does not exist") #TODO: Retry, or fail back to retrieve different word ? 
     return grammar
 
+#Function: get_vocab_by_id():
+#Get a specififc vocabulary entry based on an id (pk=grammar_id)
+def get_vocab_by_id(vocab_id):
+    try:
+        vocab = Vocabulary.objects.get(pk=vocab_id)
+    except Vocabulary.DoesNotExist:
+        raise Http404("Gomenazai~~~ VocabEntry  does not exist") #TODO: Retry, or fail back to retrieve different word ? 
+    return vocab
 
 #Function: get_kanji_by_id():
 #Get a specififc entry based on seqid (iseq_id=kanji_id)

@@ -20,7 +20,7 @@ JLPT_LEVELS = (
 )
 
 KATAKANA = 1
-HIRAGANA = 0 #More advanced than material covered in JLPT_N1
+HIRAGANA = 0 
 KANA_CLASS = (
     (KATAKANA, "KATAKANA"),
     (HIRAGANA, "HIRAGANA")
@@ -41,16 +41,18 @@ U_VERB = 1
 G5_VERB = 2 #GO DAN Verb ...
 
 #Part of speech items used in Japanese Grammar
-NOUN = 0
-VERB = 1
-I_ADJ = 2
-NA_ADJ = 3
+TBD = 0
+NOUN = 1
+VERB = 2
+I_ADJ = 3
+NA_ADJ = 4
 
 POS_ITEMS = (
     (NOUN, "NOUN"),
     (VERB, "VERB"),
     (I_ADJ, "I_ADJ"),
     (NA_ADJ, "NA_ADJ")
+    #TODO do full ist of vocabulary items...
 )
 
 #Grammar Modifiers used in common Japanese Grammar Patterns
@@ -120,7 +122,7 @@ class KanjiEntry(models.Model):
     svgid = models.IntegerField(default=0) #this key should match SVGKanji ID
     name = models.CharField(max_length=140)
     text = models.CharField(max_length=12)
-    jlptlevel = models.IntegerField(choices=JLPT_LEVELS, default=5)
+    jlpt = models.IntegerField(choices=JLPT_LEVELS, default=5)
     level = models.IntegerField(default=0) # Total of 1-1024
 
     def __str__(self):
@@ -158,7 +160,7 @@ class KanjiDescription(models.Model):
 class GrammarEntry(models.Model):
     seqid = models.IntegerField(default=0)
     text = models.CharField(max_length=140)
-    jlptlevel = models.IntegerField(choices=JLPT_LEVELS, default=5)
+    jlpt = models.IntegerField(choices=JLPT_LEVELS, default=5)
     level = models.IntegerField(default=0) # Total of 1-1024
     summary =  models.CharField(max_length=250) #Simple definition, for entire entry look to dictionary entry definitions
     #TODO: How to proerly capture exeptions? TODO
@@ -197,21 +199,24 @@ class PatternItem(models.Model): #Can be POS or MODIFIER
 #Class Vocabulary
 #Defines single Vocabulary entry, following JLPT N5-N1 lists...
 class Vocabulary(models.Model): 
-    seqid = models.IntegerField(default=0) #TODO: make this a single *key*
-    text = models.CharField(max_length=140)
-    furigana = models.CharField(max_length=140, default="")
-    romanji = models.CharField(max_length=140)
-    pos = models.IntegerField(choices=POS_ITEMS, default=0) #Part of Speech
-    definition =  models.CharField(max_length=140) #Simple definition, for entire entry look to dictionary entry definitions
-    seqid = models.IntegerField(default=0)     #Dictionary Entry Sequence ID, based on JDICT
-    jlptlevel = models.IntegerField(choices=JLPT_LEVELS, default=5)
+    seqid = models.IntegerField(default=0) #This has to match the JDICT entry ?
+    pub_date = models.DateTimeField('date published')
+    jlpt = models.IntegerField(choices=JLPT_LEVELS, default=5)
     level = models.IntegerField(default=0) # Total of 1-1024
 
+    text = models.CharField(max_length=140, default="") #Keb or Reb from Dictionary Entry  ( Kanji or combination of Kanji and Furigana )
+    furigana = models.CharField(max_length=140, default="")
+    romanji = models.CharField(max_length=140, default="")
+    pos = models.IntegerField(choices=POS_ITEMS, default=TBD) #Part of Speech
+
     def __str__(self):
-        return self.text
+        return "Vocabulary:{0} : {1}".format((self.text), (self.furigana))
 
     def get_text(self):
-        return self.text
+        if self.text == "":
+            return self.furigana
+        else:
+            return self.text
 
     def get_furigana(self):
         return self.furigana
@@ -219,8 +224,33 @@ class Vocabulary(models.Model):
     def get_romanji(self):
         return self.romanji
 
-    def get_definition(self):
-        return self.definition
+#Class LangDefinition: 
+#Placeholder for definitions of the entry, (a Vocabulary entry can have multiple different meanings)
+class LangDefinition(models.Model):
+    entry = models.ManyToManyField(Vocabulary) # After creating object,  use definition.add(<Vocabulary pointer>) #TODO: Make a base LangEntry Class?
+    jptext = models.CharField(max_length=140, default="")  #Japanese definition entry
+    entext = models.CharField(max_length=140, default="")  #English definition about entry
 
+    def __str__(self):
+        return "Definition#%s" % self.pk
 
+#Class LangNote: 
+#Notes about the specific entry, to be noted to users as a reminder, not to be tested.
+class LangNote(models.Model):
+    entry = models.ManyToManyField(Vocabulary) # After creating object,  use langnote.add(<Vocabulary pointer>)  #TODO: Make a base LangEntry Class?
+    jptext = models.CharField(max_length=140, default="")  #Japanese note about entry
+    entext = models.CharField(max_length=140, default="")  #English note about entry
+
+    def __str__(self):
+        return "Note#%s" % self.pk
+
+#Class LangTag: 
+#Tag about the specific entry, single word useful tag that can help categorize entries ( #slang, #honorific, #sports, etc.. ) #TODO: Can get from Dictionary
+class LangTag(models.Model):
+    entry = models.ManyToManyField(Vocabulary) # After creating object,  use langtag.add(<Vocabulary pointer>)  #TODO: Make a base LangEntry Class?
+    jptext = models.CharField(max_length=140, default="")  #Japanese tag
+    entext = models.CharField(max_length=140, default="")  #English tag
+
+    def __str__(self):
+        return "Tag#%s" % self.pk
 #Class Verb

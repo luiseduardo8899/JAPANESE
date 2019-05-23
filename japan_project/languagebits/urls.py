@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^kanji/jlpt/(?P<jlpt_level>[0-9]+)/$', views.kanji_list, name='kanji_list'),
     url(r'^kanji/(?P<kanji_id>[0-9]+)/$', views.kanji_detail, name='kanji_detail'),
     url(r'^grammar/(?P<grammar_id>[0-9]+)/$', views.grammar_detail, name='grammar_detail'),
+    url(r'^vocab/(?P<vocab_id>[0-9]+)/$', views.vocab_detail, name='vocab_detail'),
 ]
