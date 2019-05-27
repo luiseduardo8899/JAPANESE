@@ -1,0 +1,250 @@
+{% extends "account/base_dict.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block content %}
+<!-- FACEBOOk: JAVA-SDK-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.10&appId=512903775708770";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<!-- FACEBOOk: JAVA-SDK-->
+
+<!-- EMAIL SHARE MODAL --->
+<div class="bd-example col-md-5">
+    <div class="modal fade" id="modal_email" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="exampleModalLabel">Send to email: {{title}}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <form>
+                        <div class="md-form">
+                            <i class="fa fa-envelope prefix grey-text"></i>
+                            <input type="text" id="modal_email_id" class="form-control">
+                            <label for="defaultForm-email">Your email</label>
+                        </div>
+                        <div class="g-recaptcha" data-sitekey="6Lc8uDIUAAAAABzmga03hIaSNZHSUQLP9kFAKqaC"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <a type="button" onclick="share_email();" href="#" class="btn btn-primary">Send</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- EMAIL SHARE MODAL --->
+
+<!-- Start your project here-->
+<div class="flex-center flex-row "> 
+	<div class="col-md-5">
+
+        <!--Card-->
+        <div class="card">
+
+        <!--Card image-->
+        <!-- <img class="img-fluid" src="https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20%282%29.jpg" alt="Card image cap"> -->
+        <!--/.Card image-->
+
+        <!--Title-->
+        <!-- TODO: different colors for adjective, verbs, noun, interjections -->
+        {% if entry.pk|divisibleby:3  %} 
+        <div class="card-block" style="background-color:#2bd6ab;" >
+        {% else %}
+        {% if entry.pk|divisibleby:2  %} 
+        <div class="card-block" style="background-color:#e6d72e;" >
+        {% else %}
+        <div class="card-block" style="background-color:#f54e30;" >
+        {% endif %}
+        {% endif %}
+        <h6 style="color:light-blue">entry#:{{ entry.pk }} </h6>
+        <!-- first kanji, is the main kanji -->
+        {% if text %}
+        <div class="flex-center" >
+        <h2 class="display-2 " style="color:black;">{{ text }}</h2>
+        </div>
+        <div class="flex-center" >
+        <h4 class="display-4 " style="color:white;">{{ furigana }}</h4>
+        </div>
+        {% else %}
+        <div class="flex-center" >
+        <!-- first reading, is the main reading -->
+        <h4 class="display-4 " >{{ furigana }}</h4>
+        </div>
+        {% endif %}
+        </div>
+
+    <!--Share buttons-->
+    <div class="card-share">
+        <div class="social-reveal">
+        <a type="button" onclick="share_fb();" class="btn-floating btn-action share-toggle blue float-right" href="#"><i class="fa fa-facebook"></i></a> 
+        <!-- <a type="button" class="btn-floating btn-action share-toggle pink float-right" data-toggle="modal" data-target="#modal_email" data-whatever="@mdo"><i class="fa fa-envelope"></i></a>  -->
+        </div>
+        <a data-toggle="tooltip" data-placement="top" title="Share this vocabulary word" class="btn-floating btn-action share-toggle black float-right"><i class="fa fa-share"></i></a> 
+    </div>
+    <!--Share buttons-->
+
+
+        <div class="card-block" style="background-color:white;" >
+        <div class="flex-center flex-row "> 
+        {% if entry_stats.times_read > 0 %}
+	    <div class="col-md-2">
+        <h5> <i class="fa fa-eye" aria-hidden="true"></i> {{entry_stats.times_read }}</h5>
+        </div>
+	    <div class="col-md-3">
+        <h5> <i class="fa fa-signal" aria-hidden="true"></i> {{entry_stats.score }}% /{{entry_stats.times_quized}} </h5>
+        </div>
+        {% else %}
+        <!-- <a class="btn btn-info" onclick="toastr.info('Entry was added to your queue!');" data-toggle="tooltip" data-placement="top" title="Add to your queue" href="/dictionary/{{entry.pk}}/learn/"><i class="fa fa-download fa-lg" aria-hidden="true"></i></a> -->
+        {% endif %}
+        </div>
+        <!--
+        <button type="button" class="btn btn-primary btn-sm grey" action="/dictionary/{{entry.pk}}/learn"> <i class="fa fa-anchor" aria-hidden="true"></i></button> -->
+        </div>
+
+        <div class="card-block">
+            <h6 class="h6-responsive">definitions</h6>
+            <div class="flex-center" >
+            <h4 class="display-4"> {{ definition }} </h4>
+            </div>
+            <div class="flex-center" >
+            <h4 class="display-4"> {{ definition2 }} </h4>
+            </div>
+            <h6 class="h6-responsive">tags</h6>
+            </p>
+            <hr>
+            <div class="fb-like" data-href="http://luiseduardo8899.hopto.org/{{request.get_full_path}}" data-layout="standard" data-action="like" data-size="large" data-show-faces="true" data-share="false"></div>
+
+            {% if entry.sense_set|length > 0 %}
+                <h4>Notes:</h4>
+                {% for sense in entry.sense_set.all %}
+                {% for senseinf in sense.senseinf_set.all %}
+                <p>. {{ senseinf.text }} </p>
+                {% endfor %}
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        </div>
+    </div>
+    </div>
+
+<div style="height:19vh; background-color:white">
+</div>
+
+<script>
+
+after_load();
+
+function after_load() {
+  setTimeout(read_the_title, 1000);
+  setTimeout(get_next_flashcard, 6000);
+};
+
+function read_the_title() {
+     window.speechSynthesis.cancel();
+    //Check SpeechRecognition and read the entry
+    if (!('webkitSpeechRecognition' in window)) {
+        alert("PLEASE UPGRADE YOUR WEB BROWSER OR USE LATEST CHROME BROWSER")
+    } else {
+     var voices = window.speechSynthesis.getVoices();
+     var u = new SpeechSynthesisUtterance();
+     var index = Math.floor( Math.random()*(voices.length) );
+     var o = window.speechSynthesis;
+
+     u.lang = 'ja-JP';
+     u.text = '{{ furigana }}';
+     
+     //{% if furigana != None and furigana != ""%}
+     //u.text = '{{ furigana }}';
+     //{% else %}
+     //{% if text != None %}
+     //u.text = '{{ text }}';
+     //{% endif %}
+     //{% endif %}
+
+     //u.lang = 'en-US';
+     u.rate = 1.0; //(Math.random()*(1.0 - 0.8)) + 0.9;
+     u.pitch = 1.0; (Math.random()*(1.0 - 0.8)) + 0.8;
+     u.volume = 1.0; //(Math.random()*(1.0 - 0.9)) + 2.9;
+     u.voice = voices[index];
+
+     o.speak(u); 
+
+     //u.onend = function(event) { alert('Finished in ' + event.elapsedTime + ' seconds.'); }
+     }
+}
+
+function get_next_flashcard() {
+        window.location.href = "/language/vocab/flashcards/";
+}
+
+
+
+
+// Tooltips Initialization
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
+windon.onload =   after_load;
+</script>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId            : '512903775708770',
+      autoLogAppEvents : true,
+      xfbml            : true,
+      version          : 'v2.10'
+    });
+    FB.AppEvents.logPageView();
+  }; 
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+  share_fb = function(){
+  FB.ui(
+   {
+    method: 'share',
+    href: 'luiseduardo8899.hopto.org{{request.get_full_path}}'
+  }, function(response){}); 
+  toastr.info('Sharing to facebook. Make sure you allow popups');
+  }
+
+  share_email = function(){
+    // Share to : /dictionary/{{entry.pk}}/send_email/luis.eduardo8899@gmail.com
+    myemail = document.getElementById('modal_email_id').value;
+    if( is_email(myemail) == true ) {
+      toastr.info('Sent entry to email : '+myemail);
+      $('#modal_email').modal('hide');
+    } else {
+      toastr.error('ERROR: emailed entered invalid: '+myemail);
+    }
+  }
+
+  function is_email(email){      
+    var emailReg = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    return emailReg.test(email); 
+  }
+
+</script>
+
+{% endblock %}
+
