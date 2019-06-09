@@ -224,6 +224,15 @@ class Vocabulary(models.Model):
     def get_romanji(self):
         return self.romanji
 
+    def get_definition(self, num):
+        definitions = self.langdefinition_set.all()
+        if len(definitions) != 0 and len(definitions) > num:
+            definition = definitions[num].entext
+            return definition
+        else : 
+            definition = ""
+            return definition 
+
 #Class LangDefinition: 
 #Placeholder for definitions of the entry, (a Vocabulary entry can have multiple different meanings)
 class LangDefinition(models.Model):

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" class="full-height">
+{% load static %}
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Gokokan!</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Bootstrap core CSS -->
+    <link href="{% static "mdb/css/bootstrap.css" %}" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="{% static "mdb/css/mdb.css" %}" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="{% static "mdb/css/style.css" %}" rel="stylesheet">
+    <style>
+        .top-nav-collapse {
+            background-color: #f8bbd0 !important; 
+        }
+        .navbar:not(.top-nav-collapse) {
+            background: transparent !important;
+        }
+        @media (max-width: 768px) {
+            .navbar:not(.top-nav-collapse) {
+                background: #f8bbd0 !important;
+            } 
+        }
+        @media (max-width: 740px) {
+            .full-height,
+            .full-height body,
+            .full-height header,
+            .full-height header .view {
+                height: 700px; 
+            } 
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Navigation -->
+    <header>
+    
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top scrolling-navbar">
+            <div class="container">
+                <a class="navbar-brand" href="#" style="background-color:#e6d72e"><strong>GOKOKAN</strong></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-7" aria-controls="navbarSupportedContent-7" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent-7">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#"  style="background-color:#e6d72e">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/dictionary/languageguide/"  style="background-color:#e6d72e">Learn</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/search/"  style="background-color:#e6d72e">Dictionary</a>
+                        </li>
+                    </ul>
+                    <form class="form-inline">
+                        <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                    </form>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Intro Section -->
+        <!-- <div class="view hm-purple-slight jarallax" data-jarallax='{"speed": 0.2}' style="background-image: url('https://mdbootstrap.com/img/Photos/Others/gradient2.png');"> -->
+        <div class="view hm-purple-slight jarallax" data-jarallax='{"speed": 0.2}' style="background-image:url('{% static "splash/claybanks.jpg" %}');">
+            <div class="full-bg-img">
+                <div class="container flex-center">
+                    <div class="row pt-5 mt-3">
+                        <div class="col-md-12 wow fadeIn mb-3">
+                            <div class="text-center">
+                                <ul>
+                                    <li>
+                                        <h1 class="display-2 font-bold mb-5 wow fadeInUp"  style="background-color:#e6d72e">GOKOKAN</h1></li>
+                                        <h1 class="display-4 font-bold mb-5 wow fadeInUp"  style="background-color:white">Learn Japanese Online for Free</h1></li>
+                                    <li>
+                                        <h5 class="mb-5 wow fadeInUp" data-wow-delay="0.2s"  style="background-color:#e6d72e">Sign up now to learn and track your daily progress, completely free, forever!</h5>
+                                    </li>
+                                    <li class="wow fadeInUp" data-wow-delay="0.4s">
+                                        <a class="btn btn-amber lg" href="/account/signup/"><i class="fa fa-user left"></i> Sign me up!</a>
+                                        <a class="btn btn-indigo " href="/dictionary/learnmore"><i class="fa fa-book left"></i> Learn more</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    </header>
+    <!-- Main Navigation -->
+
+    <!-- Main Layout -->
+    <main>
+
+        <div class="container">
+            
+            <!-- Grid row -->
+            <div class="row py-5 mt-4">
+
+                <!-- Grid column -->
+                <div class="col-md-12 text-center">
+
+                    <p> こんにちは！</p>
+                    <p>Hello there! :) </p>
+                    <p>Gokokan is a site made by language lovers for language learners. </p>
+                    <p>Our focus is in exposing the learner to new vocabulary and grammar through easy to understand video explanations, and immediate usage of newly learned patterns. We used spaced repetition, but varying the activities to keep the learner engaged. </p>
+                    <p>Join us and let us help you no your way to learn Japanese. <p>
+
+                </div>
+                <!-- Grid column -->
+
+            </div>
+            <!-- Grid row -->
+
+        </div>
+
+    </main>
+    <!-- Main Layout -->
+
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="{% static "mdb/js/popper.min.js"%}"></script>
+    <script type="text/javascript" src="{% static "mdb/js/mdb.js"%}"></script>
+    <script type="text/javascript" src="{% static "mdb/js/bootstrap.js"%}"></script>
+    <script>
+        new WOW().init();
+    </script>
+</body>
+</html>

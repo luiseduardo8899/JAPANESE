@@ -49,6 +49,10 @@
 <!-- Start your project here-->
 <div class="flex-center flex-row "> 
 	<div class="col-md-5">
+
+
+
+
         <!--Card-->
         <div class="card">
 
@@ -56,31 +60,18 @@
         <!-- <img class="img-fluid" src="https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20%282%29.jpg" alt="Card image cap"> -->
         <!--/.Card image-->
 
-
         <!--Title-->
         <!-- TODO: different colors for adjective, verbs, noun, interjections -->
-        {% if entry.pk|divisibleby:3  %} 
-        <div class="card-block" style="background-color:#2bd6ab;" >
-        {% else %}
-        {% if entry.pk|divisibleby:2  %} 
-        <div class="card-block" style="background-color:#e6d72e;" >
-        {% else %}
-        <div class="card-block" style="background-color:#f54e30;" >
-        {% endif %}
-        {% endif %}
-        <h6 style="color:light-blue">entry#:{{ entry.pk }} </h6>
+        <div class="card-block" style="background-color:black;" >
+
+        <h6 style="color:gray">Furigana quiz for entry#:{{ entry.pk }} </h6>
         <!-- first kanji, is the main kanji -->
         {% if text %}
         <div class="flex-center" >
-        <h2 class="display-2 " style="color:black;">{{ text }}</h2>
+        <h2 class="display-2 " style="color:white;">{{ text }}</h2>
         </div>
         <div class="flex-center" >
-        <h4 class="display-4 " style="color:white;">{{ furigana }}</h4>
-        </div>
-        {% else %}
-        <div class="flex-center" >
-        <!-- first reading, is the main reading -->
-        <h4 class="display-4 " >{{ furigana }}</h4>
+        <h4 class="display-4 " style="color:gray;">{{ definition }}</h4>
         </div>
         {% endif %}
         </div>
@@ -114,26 +105,41 @@
         </div>
 
         <div class="card-block">
-            <h6 class="h6-responsive">definitions</h6>
-            <div class="flex-center" >
-            <h4 class="display-4"> {{ definition }} </h4>
-            </div>
-            <div class="flex-center" >
-            <h4 class="display-4"> {{ definition2 }} </h4>
-            </div>
-            <h6 class="h6-responsive">tags</h6>
-            </p>
-            <hr>
-            <div class="fb-like" data-href="http://luiseduardo8899.hopto.org/{{request.get_full_path}}" data-layout="standard" data-action="like" data-size="large" data-show-faces="true" data-share="false"></div>
+            <h6 class="h6-responsive">Choose the correct furigana pronunciation: </h6>
 
-            {% if entry.sense_set|length > 0 %}
-                <h4>Notes:</h4>
-                {% for sense in entry.sense_set.all %}
-                {% for senseinf in sense.senseinf_set.all %}
-                <p>. {{ senseinf.text }} </p>
-                {% endfor %}
-                {% endfor %}
-            {% endif %}
+            {% if entry.pk|divisibleby:3  %} 
+            <div class="flex-center" >
+            <br>
+            <button type="button" onclick="check_answer(1);" id="quiz-button1" class="btn green btn-primary waves-effect btn-lg ">{{ furigana }} </button>
+            </div>
+            <div class="flex-center" >
+            <br>
+            <button type="button"  onclick="check_answer(2);" class="btn green btn-primary waves-effect btn-lg ">{{ furigana2 }} </button>
+            </div>
+            {% else %} 
+            {% if entry.pk|divisibleby:2  %} 
+            <div class="flex-center" >
+            <button type="button"  onclick="check_answer(2);" class="btn pink btn-primary waves-effect btn-lg ">{{ furigana2 }} </button>
+            </div>
+            <div class="flex-center" >
+            <button type="button" onclick="check_answer(1);" id="quiz-button1" class="btn pink btn-primary waves-effect btn-lg ">{{ furigana }} </button>
+            </div>
+            {% else %} 
+            <div class="flex-center" >
+            <button type="button" onclick="check_answer(2);" class="btn purple btn-primary waves-effect btn-lg ">{{ furigana2 }} </button>
+            </div>
+            <div class="flex-center" >
+            <button type="button" onclick="check_answer(1);" id="quiz-button1" class="btn purple btn-primary waves-effect btn-lg ">{{ furigana }} </button>
+            </div>
+            {% endif %} 
+            {% endif %} 
+            
+            </div>
+        </div>
+
+        <br>
+        <div class="progress md-progress" style="height: 20px">
+            <div class="progress-bar" id="progress-bar1" style="width: 0%; height: 20px" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
         </div>
 
         </div>
@@ -145,13 +151,40 @@
 
 <script>
 
+var stop_timer = 0;
+
 after_load();
 
 function after_load() {
+  setTimeout(update_timer, 1000, 1);
   setTimeout(read_the_title, 1000);
-  setTimeout(read_the_definition, 3000);
-  setTimeout(read_the_title, 5000);
-  setTimeout(get_next_flashcard, 8000);
+  setTimeout(read_the_title, 2500);
+};
+
+function update_timer(valeur) {
+  //valeur = 10;
+  //var valeur = 80;
+  valeur = valeur + 1;
+  mytext = valeur+'%';
+  $('.progress-bar').css('width', valeur+'%').attr('aria-valuenow', valeur).text(mytext);    
+  if (stop_timer == 1) {
+      valeur = $('.progress-bar').attr('aria-valuenow', valeur);
+      $('.progress-bar').css('width', valeur+'%').attr('aria-valuenow', valeur).text(mytext);    
+  } else {
+      if ( valeur >= 50 ) {
+      $('.progress-bar').attr('class', "progress-bar bg-warning" );
+      } 
+      if ( valeur >= 70 ) {
+      $('.progress-bar').attr('class', "progress-bar bg-danger" );
+      }
+      if ( valeur >= 100 ) {
+          //show right answer in popup?
+          setTimeout(get_next_quiz, 2000);
+        toastr["warning"]("Timeout: Correct naswer is : {{text}}: {{furigana}} ")
+      } else {
+          setTimeout(update_timer, 100, valeur);
+      }
+  }
 };
 
 function read_the_title() {
@@ -168,8 +201,17 @@ function read_the_title() {
      u.lang = 'ja-JP';
      u.text = '{{ furigana }}';
      
-     u.rate = (Math.random()*(0.3)) + 0.55;
-     u.pitch = (Math.random()*(1.0 - 0.8)) + 0.8;
+     //{% if furigana != None and furigana != ""%}
+     //u.text = '{{ furigana }}';
+     //{% else %}
+     //{% if text != None %}
+     //u.text = '{{ text }}';
+     //{% endif %}
+     //{% endif %}
+
+     //u.lang = 'en-US';
+     u.rate = 1.0; //(Math.random()*(1.0 - 0.8)) + 0.9;
+     u.pitch = 1.0; (Math.random()*(1.0 - 0.8)) + 0.8;
      u.volume = 1.0; //(Math.random()*(1.0 - 0.9)) + 2.9;
      u.voice = voices[index];
 
@@ -178,38 +220,30 @@ function read_the_title() {
      //u.onend = function(event) { alert('Finished in ' + event.elapsedTime + ' seconds.'); }
      }
 }
-function read_the_definition() {
-     window.speechSynthesis.cancel();
-    //Check SpeechRecognition and read the entry
-    if (!('webkitSpeechRecognition' in window)) {
-    } else {
-     var voices = window.speechSynthesis.getVoices();
-     var d = new SpeechSynthesisUtterance();
-     var index = Math.floor( Math.random()*(voices.length) );
-     var o = window.speechSynthesis;
 
-     d.lang = 'us-EN';
-     d.lang = 'en-US';
-     
-     d.rate = (Math.random()*(0.3)) + 0.7;
-     d.pitch = 1.0; (Math.random()*(1.0 - 0.8)) + 0.8;
-     d.volume = 1.0; //(Math.random()*(1.0 - 0.9)) + 2.9;
-     d.voice = voices[index];
-     d.text = '{{ definition }}';
-     o.speak(d); 
-
-     //u.onend = function(event) { alert('Finished in ' + event.elapsedTime + ' seconds.'); }
-     }
-}
-
-function get_next_flashcard() {
+function get_next_quiz() {
         {% if next %}
         window.location.href =" {{ next }} " ;
         {% else %}
-        window.location.href = "/language/vocab/flashcards/";
+        window.location.href = "/language/vocab/furigana_quiz/";
         {% endif %}
 }
 
+function check_answer(item_num) {
+    if (item_num == 1 ) {
+        toastr["info"]("Correct! +1 point");
+        stop_timer = 1;
+      $('.progress-bar').attr('class', "progress-bar bg-success" );
+        setTimeout(get_next_quiz, 2000);
+    } else {
+        toastr["error"]("{{text}}: Answer is :  {{furigana}} ");
+        stop_timer = 1;
+      $('.progress-bar').attr('class', "progress-bar bg-danger" );
+        setTimeout(get_next_quiz, 2000);
+    }
+
+        
+}
 
 
 

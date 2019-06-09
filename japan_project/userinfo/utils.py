@@ -21,9 +21,10 @@ def get_profile(puser):
     except Profile.DoesNotExist: #if does not exist create a new one
         profile = Profile(user = puser)
         profile.country = ""
-        profile.location=""
-        profile.gender="Male"
-        profile.introduction=""
+        profile.location = ""
+        profile.gender = "Male"
+        profile.introduction = ""
+        profile.age = 18
         profile.save()
     return profile
 

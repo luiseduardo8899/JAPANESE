@@ -1,0 +1,138 @@
+{% extends "account/base_dict.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block content %}
+
+<!-- FACEBOOk: JAVA-SDK-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.10&appId=512903775708770";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<!-- FACEBOOk: JAVA-SDK-->
+
+
+<!-- Start your project here-->
+<div  class="flex-center flex-row">
+<div class=" col-md-6 text-center">
+  <h1 class="h1-responsive">Japanese Language Videos</h1>
+  <p>This is an index of Japanese language videos we are compiling.</p>
+  <p> We upload new videos every week.</p>
+<div style="height:6vh; background-color:white">
+</div>
+</div>
+</div>
+
+<!-- First Row of Cards -->
+<div  class="flex-center flex-row" >
+<h1>HOLA</h1>
+</div>
+
+<div style="height:6vh; background-color:white">
+</div>
+<!-- Second Row of Cards -->
+<div  class="flex-center flex-row" >
+
+<!--Card-->
+<div class="card col-md-2 ">
+
+    <!--Card image-->
+    <div class="view overlay hm-white-slight">
+        <a href="#">
+            <div class="mask"></div>
+        </a>
+    </div>
+
+    <!--Card content-->
+    <div class="card-body">
+        <!--Title-->
+        <h4 class="card-title">JLPT N5 Kanji</h4>
+        <!--Text-->
+        <p class="card-text">These are the entry level Kanji students must learn to pass the JLPT N5 testcase.</p>
+        <a href="/language/kanji/jlpt/5/" class="btn btn-primary">View Kanji</a>
+    </div>
+
+</div>
+<!--/.Card-->
+<div style="width:6vh; background-color:white">
+</div>
+<!--Card-->
+<div class="card col-md-2 ">
+
+    <!--Card image-->
+    <div class="view overlay hm-white-slight">
+        <!--- <img src="https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20%287%29.jpg" class="img-fluid" alt=""> -->
+        <a href="#">
+            <div class="mask"></div>
+        </a>
+    </div>
+
+
+</div>
+<!--/.Card-->
+
+</div>
+
+
+<div style="height:19vh; background-color:white">
+</div>
+
+<script>
+// Tooltips Initialization
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId            : '512903775708770',
+      autoLogAppEvents : true,
+      xfbml            : true,
+      version          : 'v2.10'
+    });
+    FB.AppEvents.logPageView();
+  }; 
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+  share_fb = function(){
+  FB.ui(
+   {
+    method: 'share',
+    href: 'luiseduardo8899.hopto.org{{request.get_full_path}}'
+  }, function(response){}); 
+  toastr.info('Sharing to facebook. Make sure you allow popups');
+  }
+
+  share_email = function(){
+    // Share to : /dictionary/{{entry.pk}}/send_email/luis.eduardo8899@gmail.com
+    myemail = document.getElementById('modal_email_id').value;
+    if( is_email(myemail) == true ) {
+      toastr.info('Sent entry to email : '+myemail);
+      $('#modal_email').modal('hide');
+    } else {
+      toastr.error('ERROR: emailed entered invalid: '+myemail);
+    }
+  }
+
+  function is_email(email){      
+    var emailReg = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    return emailReg.test(email); 
+  }
+
+</script>
+
+{% endblock %}
+

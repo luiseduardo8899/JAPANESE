@@ -13,6 +13,7 @@ from django.http import Http404
 from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
 from django.utils import timezone
+from django.shortcuts import redirect 
 import time
 from csv import reader
 import romkan
@@ -298,9 +299,54 @@ def update_grammar(request):
     return HttpResponseRedirect('teacher/successful_upload')
 
 
+def upload_dictionary(request):
+    user = get_user(request)
+    profile = get_profile(user)
+    template = loader.get_template('teacher/upload_vocab.html')
+    #TODO: Check if user is admin
+    context = {
+        'user': user,
+        'profile': profile,
+    }
+    return HttpResponse(template.render(context, request))
+
+#process form and update the vocabulary in the database
+def update_dictionary(request):
+    user = get_user(request)
+    #TODO: check that user is admin user
+	#try and retrieve Form inputs..
+    if request.method == 'POST' and request.FILES['xml_data_file']:
+        xml_file = request.FILES['xml_data_file']
+        fs = FileSystemStorage()
+        filename = fs.save(xml_file.name, xml_file)
+        uploaded_file_url = fs.url(filename)
+        #process the csv data
+        #python3 supports utf-8 encoding natively
+        # error_in_file = check_csv_format(uploaded_file_url)
+        #error_in_file = check_xml_format()
+        error_in_file = False #TODO: Check XML format matches JMDICT
+        if error_in_file == False :
+            #BASE_DIR = "/home/luis/TRIBU/projects/JAPANESE/"
+            #MEDIA_URL = os.path.join(BASE_DIR, uploaded_file_url)
+            process_xml_file(uploaded_file_url)
+            #process_csv_file(uploaded_file_url)
+
+        return render(request, 'teacher/successful_upload.html', {
+            'uploaded_file_url': uploaded_file_url,
+            'error_in_file': error_in_file
+        })
+
+
+        # Always return an HttpResponseRedirect after successfully dealing
+        # with POST data. This prevents data from being posted twice if a
+        # user hits the Back button.
+        # TODO: how to pass arguments to redirect page ? 
+    return HttpResponseRedirect('teacher/successful_upload')
 
 def upload_vocab(request):
     user = get_user(request)
+    if user.is_anonymous : 
+        return redirect("/account/login")
     profile = get_profile(user)
     template = loader.get_template('teacher/upload_vocab.html')
     #TODO: Check if user is admin
@@ -328,7 +374,7 @@ def update_vocab(request):
         if error_in_file == False :
             #BASE_DIR = "/home/luis/TRIBU/projects/JAPANESE/"
             #MEDIA_URL = os.path.join(BASE_DIR, uploaded_file_url)
-            process_xml_file(uploaded_file_url)
+            process_vocab_xml_file(uploaded_file_url)
             #process_csv_file(uploaded_file_url)
 
         return render(request, 'teacher/successful_upload.html', {
@@ -672,7 +718,7 @@ def process_grammar_xml_file(xml_file):
         #entry.pub_date = datetime.datetime.now()
         #get kanji and reading element, kanji element may be empty
         jlpt_level_set = entry_x.findall('jlpt') # Kanji Element
-        entry.jlptlevel = jlpt_level_set[0].text
+        entry.jlpt = jlpt_level_set[0].text
         level_set = entry_x.findall('level') # Sublevel
         entry.level = jlpt_level_set[0].text
         summary_set = entry_x.findall('summary') # Summary
@@ -687,6 +733,93 @@ def process_grammar_xml_file(xml_file):
         
     return list_of_entries # return the list of uploaded entries ( KEB/REB )
 
+
+#Format for Vocab XML Files is defined in GKVocab 
+def process_vocab_xml_file(xml_file):
+    list_of_entries = []
+    number = 0
+    counter = 0
+    level_counter = 1
+
+    logger2.info('Processing GKVocab XML File - ')
+    #Main execution code
+    #load the entire JMdict_e XML File 
+    tree = metree.parse(xml_file)
+
+    #get root of the XML File
+    root = tree.getroot()
+
+    #TODO: Check the XML format... ( Check fileds are all properly defined )
+    logger2.info('TODO: Check XML format  - ')
+
+    #get all entries in the file
+    entries_x = root.findall('vocab_entry')
+    logger.info("Got root %s" % root)
+    for entry_x in entries_x:
+        number += 1
+        #create the entry
+        level_x = 0 #default level 0, level assigned in later processing
+        vocab = Vocabulary()
+        ent_seq_set_x = entry_x.findall('ent_seq')
+        vocab.seqid = ent_seq_set_x[0].text
+        vocab.pub_date = datetime.datetime.now()
+        #Get JLPT Level and overall level of difficulty
+        jlpt_set = entry_x.findall('jlpt') # Kanji Element
+        level_set = entry_x.findall('level') # Reading Element ( furigana )
+        vocab.jlpt = jlpt_set[0].text
+        #If no level set, assign one arbitrarily
+        if not level_set or level_set[0].text == "" or level_set[0].text == None:
+            #TODO: For now increase level based on 5 entries per level
+            counter += 1
+            if counter == 5:
+                level_counter += 1
+                counter = 0
+            vocab.level = level_counter
+        else:
+            vocab.level = level_set[0].text
+
+        #get kanji and reading element, kanji element may be empty
+        kanji_set = entry_x.findall('kanji') # Kanji Element
+        furigana_set = entry_x.findall('furigana') # Reading Element ( furigana )
+        if kanji_set[0].text == "" or kanji_set[0].text == None:
+            vocab.text = furigana_set[0].text
+        else:
+            vocab.text = kanji_set[0].text
+        vocab.furigana = furigana_set[0].text
+        roma = romkan.to_roma(furigana_set[0].text) # automatic convert to romanji
+        #TODO: POS processing, upload from JDICT XML
+        vocab.romanji = roma
+        vocab.save()
+
+        #get sense elements, these include tags and definitions
+        definition_set = entry_x.findall('definition') # Sense element
+        #add_keb(entry, k_ele_set)
+        #add_reb(entry, r_ele_set)
+        add_definition(vocab, definition_set)
+        #TODO: Add NOTES
+        #TODO: Add TAGS
+        
+    return list_of_entries # return the list of uploaded entries ( KEB/REB )
+
+#Add all Definition Elements found in the Vocabulary Entry
+def add_definition(entry, def_set):
+    for def_x in def_set :
+        #check if Definition entry exists, and get a pointer
+        #.. for entry to be duplicate the text must be exactly the same
+        defs = LangDefinition.objects.all().filter(entext = def_x.text) 
+        if not defs : #create a new one and save
+            logger.info("IF DETECTED NO PRE EXISTING LANGDEFINITIONS CREATE NEW ONE %s " % defs)
+            def1 = LangDefinition()
+            def1.entext = def_x.text
+            def1.save()
+            logger.info('ADDED NEW LANGDEFINITION: %s' % def1.entext)
+        else :
+            def1 = defs[0]
+        if len(defs) > 1 : 
+            logger.warning('WARNING DUPLICATE LANGDEFINITIONS: %s ' % def1.entext) 
+        def1.entry.add(entry) # add entry pointer to list
+        def1.save()
+        logger.info('FINISHED UPDATING LANGUAGEDEFINITION: %s' % def1.entext)
 
 #Format for XML Files will be same as used in the JMdct file. 
 #Any nes aditions to the vocabulary should be done manually or using the same format as JMdict
@@ -712,7 +845,7 @@ def process_xml_file(xml_file):
         number += 1
         #create the entry
         level_x = 0 #default level 0, level assigned in later processing
-        entry = Entry()
+        entry = VocabEntry()
         ent_seq_set_x = entry_x.findall('ent_seq')
         entry.seqid = ent_seq_set_x[0].text
         entry.pub_date = datetime.datetime.now()
@@ -822,7 +955,7 @@ def process_kanji_xml_file(xml_file):
         entry.text = name_set_x[0].text
         jlpt_set_x = entry_x.findall('jlpt')
         jlpt_level_set = entry_x.findall('jlpt') # Kanji Element JLPT Level
-        entry.jlptlevel = jlpt_level_set[0].text
+        entry.jlpt = jlpt_level_set[0].text
         level_set = entry_x.findall('level') # Sublevel
         entry.level = jlpt_level_set[0].text
         entry.save()

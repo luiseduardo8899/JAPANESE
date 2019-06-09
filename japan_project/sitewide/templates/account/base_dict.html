@@ -22,7 +22,11 @@
 <head>
     <!-- You can use open graph tags to customize link previews.
     Learn more: https://developers.facebook.com/docs/sharing/webmasters -->
-    <title>{{ title }}: {{ definition }}</title>
+    {% if not is_quiz %}
+    <title>G: {{ text }}: {{ definition }}</title>
+    {% else %}
+    <title>Quiz: {{ text }}</title>
+    {% endif %}
     <meta property="og:url"           content="luiseduardo8899.hopto.org{{ request.get_full_path }}"/>
     <meta property="og:type"          content="website" />
     <meta property="og:title"         content="{{ title }}" />

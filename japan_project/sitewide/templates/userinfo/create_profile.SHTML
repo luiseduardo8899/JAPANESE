@@ -1,0 +1,41 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+{% block head_title %}{% trans "Create Your Profile" %}{% endblock %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="flex-center flex-row "> 
+<h1>CREATE YOUR PROFILE</h1>
+</div>
+
+<br>
+<br>
+<br>
+
+<div class="flex-center flex-row "> 
+
+
+<form action="userinfo/create_profile/" method="post">
+    {% csrf_token %}
+
+    <div class="row">
+     <div class="col-6">
+        {{ form.gender|as_crispy_field }}
+      </div>
+      <div class="col-6">
+        {{ form.age|as_crispy_field }}
+      </div>
+    </div>
+    {{ form.country|as_crispy_field }}
+    {{ form.location|as_crispy_field }}
+    {{ form.language|as_crispy_field }}
+    {{ form.intro|as_crispy_field }}
+
+    <button type="submit" class="btn btn-pink">Create</button>
+</form>
+</div>
+
+{% endblock %}

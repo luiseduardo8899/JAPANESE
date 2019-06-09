@@ -4,7 +4,7 @@
 {% block content %}
 <br>
 <br>
-<h1>Upload new vocabulary XML File following GKVocab format</h1>
+<h1>Upload new Dictionary Entries in JDICT format </h1>
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 <form action="{% url 'teacher:update_vocab' %}" method="post" enctype="multipart/form-data">
 {% csrf_token %}
