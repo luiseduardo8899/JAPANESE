@@ -1,5 +1,7 @@
 from languagebits.models import Kana, GrammarEntry, KanjiEntry, Vocabulary, LangDefinition
+from languagestats.models import *
 from random import *
+import datetime
 from django.http import HttpResponseRedirect, HttpResponse
 from django.http import Http404
 import re
@@ -184,3 +186,82 @@ def scramble_furigana(furigana):
             return furigana2
 
 
+def get_vocab_stats(puser, vocab):
+    #try to get the user profile TODO: should we try getting multiple times?
+    try:
+        vocabstats = VocabStats.objects.get(entry = vocab)
+    except VocabStats.DoesNotExist: #if does not exist create a new one
+        vocabstats = VocabStats(entry  = vocab)
+        vocabstats.user = puser #TODO add to NEW)TERM memory
+        vocabstats.seqid = vocab.seqid
+        vocabstats.jlpt = vocab.jlpt
+        vocabstats.text = vocab.text
+        vocabstats.furigana = vocab.furigana
+        vocabstats.add_date =  datetime.datetime.now()
+        vocabstats.last_read_date = datetime.datetime.now()
+        vocabstats.last_quiz_date = datetime.date(1978, 8, 16) #blank=true
+        vocabstats.times_read = 0
+        vocabstats.times_quized = 0
+        vocabstats.furigana_score  = 0
+        vocabstats.pronunciation_score  = 0
+        vocabstats.definition_score  = 0
+        vocabstats.save()
+        #vocabstats.save()
+    #Update vocab stats
+    vocabstats.text = vocab.text
+    times_read = vocabstats.times_read + 1
+    vocabstats.times_read = times_read 
+
+    if vocabstats.times_read > 30:
+        memory = get_long_term_mem(puser)
+    elif vocabstats.times_read > 20:
+        memory = get_mid_term_mem(puser)
+    elif vocabstats.times_read > 5:
+        memory = get_short_term_mem(puser)
+    else:
+        memory = get_new_term_mem(puser)
+
+    vocabstats.memory.clear() #remove previous items
+    vocabstats.memory.add(memory)
+    print("MEMORIES: %s" % vocabstats.memory.all())
+    vocabstats.save()
+
+    #print("Times read: %s" % (vocabstats.times_read) )
+    print('MEMORY: %s Entry:%s [%s] : JLPT LEVEL:%s LEVEL:%s Times Read: %s (User: vocabstats.user:%s)' % (memory , vocabstats.text, vocabstats.furigana, vocabstats.jlpt , vocab.level, vocabstats.times_read, vocabstats.user  )  )
+    return vocabstats
+
+def get_new_term_mem(puser):
+    try:
+        memory = puser.memory_set.get(mem_type = NEW_TERM)
+    except Memory.DoesNotExist: 
+        memory = Memory(user = puser)
+        memory.mem_type = NEW_TERM
+        memory.save()
+    return memory
+
+def get_short_term_mem(puser):
+    try:
+        memory = puser.memory_set.get(mem_type = SHORT_TERM)
+    except Memory.DoesNotExist: 
+        memory = Memory(user = puser)
+        memory.mem_type = SHORT_TERM
+        memory.save()
+    return memory
+
+def get_mid_term_mem(puser):
+    try:
+        memory = puser.memory_set.get(mem_type = MID_TERM)
+    except Memory.DoesNotExist: 
+        memory = Memory(user = puser)
+        memory.mem_type = MID_TERM
+        memory.save()
+    return memory
+
+def get_long_term_mem(puser):
+    try:
+        memory = puser.memory_set.get(mem_type = LONG_TERM)
+    except Memory.DoesNotExist: 
+        memory = Memory(user = puser)
+        memory.mem_type = LONG_TERM
+        memory.save()
+    return memory

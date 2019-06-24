@@ -33,7 +33,7 @@ class Video(models.Model):
     level = models.IntegerField(default=0) # Total of 1-1024
 
     def __str__(self):
-        return "Video#%s" % ( self.pk self.title ) 
+        return "Video#%s" % self.title  
 
     class Meta:
         ordering = ['pub_date']

@@ -110,26 +110,26 @@
             {% if entry.pk|divisibleby:3  %} 
             <div class="flex-center" >
             <br>
-            <button type="button" onclick="check_answer(1);" id="quiz-button1" class="btn green btn-primary waves-effect btn-lg ">{{ furigana }} </button>
+            <button type="button" onclick="check_answer('{{ furigana }}' );" id="quiz-button1" class="btn green btn-primary waves-effect btn-lg ">{{ furigana }} </button>
             </div>
             <div class="flex-center" >
             <br>
-            <button type="button"  onclick="check_answer(2);" class="btn green btn-primary waves-effect btn-lg ">{{ furigana2 }} </button>
+            <button type="button"  onclick="check_answer('{{ furigana2 }}' );" class="btn green btn-primary waves-effect btn-lg ">{{ furigana2 }} </button>
             </div>
             {% else %} 
             {% if entry.pk|divisibleby:2  %} 
             <div class="flex-center" >
-            <button type="button"  onclick="check_answer(2);" class="btn pink btn-primary waves-effect btn-lg ">{{ furigana2 }} </button>
+            <button type="button"  onclick="check_answer('{{ furigana2 }}' );" class="btn pink btn-primary waves-effect btn-lg ">{{ furigana2 }} </button>
             </div>
             <div class="flex-center" >
-            <button type="button" onclick="check_answer(1);" id="quiz-button1" class="btn pink btn-primary waves-effect btn-lg ">{{ furigana }} </button>
+            <button type="button" onclick="check_answer('{{ furigana }}' );" id="quiz-button1" class="btn pink btn-primary waves-effect btn-lg ">{{ furigana }} </button>
             </div>
             {% else %} 
             <div class="flex-center" >
-            <button type="button" onclick="check_answer(2);" class="btn purple btn-primary waves-effect btn-lg ">{{ furigana2 }} </button>
+            <button type="button" onclick="check_answer('{{ furigana2 }}' );" class="btn purple btn-primary waves-effect btn-lg ">{{ furigana2 }} </button>
             </div>
             <div class="flex-center" >
-            <button type="button" onclick="check_answer(1);" id="quiz-button1" class="btn purple btn-primary waves-effect btn-lg ">{{ furigana }} </button>
+            <button type="button" onclick="check_answer('{{ furigana }}' );" id="quiz-button1" class="btn purple btn-primary waves-effect btn-lg ">{{ furigana }} </button>
             </div>
             {% endif %} 
             {% endif %} 
@@ -156,7 +156,7 @@ var stop_timer = 0;
 after_load();
 
 function after_load() {
-  setTimeout(update_timer, 1000, 1);
+  setTimeout(update_timer, 1000, 100);
   setTimeout(read_the_title, 1000);
   setTimeout(read_the_title, 2500);
 };
@@ -164,20 +164,20 @@ function after_load() {
 function update_timer(valeur) {
   //valeur = 10;
   //var valeur = 80;
-  valeur = valeur + 1;
+  valeur = valeur - 1;
   mytext = valeur+'%';
   $('.progress-bar').css('width', valeur+'%').attr('aria-valuenow', valeur).text(mytext);    
   if (stop_timer == 1) {
       valeur = $('.progress-bar').attr('aria-valuenow', valeur);
       $('.progress-bar').css('width', valeur+'%').attr('aria-valuenow', valeur).text(mytext);    
   } else {
-      if ( valeur >= 50 ) {
+      if ( valeur <= 60 ) {
       $('.progress-bar').attr('class', "progress-bar bg-warning" );
       } 
-      if ( valeur >= 70 ) {
+      if ( valeur <= 30 ) {
       $('.progress-bar').attr('class', "progress-bar bg-danger" );
       }
-      if ( valeur >= 100 ) {
+      if ( valeur <= 0 ) {
           //show right answer in popup?
           setTimeout(get_next_quiz, 2000);
         toastr["warning"]("Timeout: Correct naswer is : {{text}}: {{furigana}} ")
@@ -227,23 +227,39 @@ function get_next_quiz() {
         {% else %}
         window.location.href = "/language/vocab/furigana_quiz/";
         {% endif %}
-}
+};
 
-function check_answer(item_num) {
-    if (item_num == 1 ) {
-        toastr["info"]("Correct! +1 point");
-        stop_timer = 1;
-      $('.progress-bar').attr('class', "progress-bar bg-success" );
-        setTimeout(get_next_quiz, 2000);
-    } else {
-        toastr["error"]("{{text}}: Answer is :  {{furigana}} ");
-        stop_timer = 1;
-      $('.progress-bar').attr('class', "progress-bar bg-danger" );
-        setTimeout(get_next_quiz, 2000);
-    }
-
-        
-}
+function check_answer(answer) {
+stop_timer = 1;
+ $.ajax({
+        url: '/language/vocab/check_fur_answer/{{entry.pk}}',
+        data: {
+          'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+          'furigana': answer
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.success) {
+            if(data.result == true) {
+		toastr["info"]("Correct answer: {{text}} : {{ furigana }} :  +100 points");
+                toastr["info"](data.furigana_score);
+                $('.progress-bar').attr('class', "progress-bar bg-success" );
+            } else {
+                toastr["error"]("INCORRECT: Correct answer: {{text}} : {{ furigana }} ");
+                toastr["info"](data.score);
+                $('.progress-bar').attr('class', "progress-bar bg-danger" );
+            }
+            setTimeout(get_next_quiz, 2000);
+            // here you update the HTML to change the active to innactive
+          }else{
+            stop_timer = 1;
+            toastr["error"]("{{text}}: AJAX FAILED");
+            $('.progress-bar').attr('class', "progress-bar bg-danger" );
+            setTimeout(get_next_quiz, 2000);
+          }
+        }
+      });
+};
 
 
 

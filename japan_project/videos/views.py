@@ -23,4 +23,4 @@ def list_videos(request, video_level):
     video_list  = get_video_list(video_level)
     #video_stats = get_video_stats(user, video , 1) #1 new if it does not exist
     #return render(request, "videos/watch.html", {'video':video, 'user':user, 'stats':stats, 'video_stats':video_stats })
-    return render(request, "videos/watch.html", {'video_list':video_list, 'user':user, 'stats':stats })
+    return render(request, "videos/list.html", {'video_list':video_list, 'user':user, 'stats':stats })

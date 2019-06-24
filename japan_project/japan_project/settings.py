@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'userinfo.apps.UserinfoConfig',
     'dictionary.apps.DictionaryConfig',
     'languagebits.apps.LanguagebitsConfig',
+    'languagestats.apps.LanguagestatsConfig',
+    'videos.apps.VideosConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,7 +55,12 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'payments',
     'haystack',
+    'django_countries',
+    'languages',
+    'crispy_forms',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 #EMAIL
 #Incoming mail server: mail.gokokan.com 
@@ -125,8 +132,8 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-LOGIN_REDIRECT_URL = '/hello/'
-LOGOUT_REDIRECT_URL = '/byebye/'
+LOGIN_REDIRECT_URL = '/language/vocab/practice/'
+LOGOUT_REDIRECT_URL = '/'
 ROOT_URLCONF = 'japan_project.urls'
 
 TEMPLATES = [

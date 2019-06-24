@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 from languagebits.models import Kana 
 from languagebits.models import Vocabulary 
 from languagebits.utils import * 
@@ -38,12 +39,82 @@ def grammar_detail(request, grammar_id):
 # Returns vocabulary details based on ID (TODO: use seqid)
 def vocab_detail(request, vocab_id):
     vocab  = get_vocab_by_id(vocab_id)
-    kanji = vocab.get_text()
+    text = vocab.get_text()
     furigana = vocab.get_furigana()
-    def1 = vocab.get_definition()
-    #def2 = vocab.get_def2()
-    #def3 = vocab.get_def3()
-    return render(request, "languagebits/vocab/detail.html", {'entry':vocab, 'text':kanji, 'definition':def1})
+    #Get definitions:
+    definition = vocab.get_definition(0)
+    definition2 = vocab.get_definition(1)
+    return render(request, "languagebits/vocab/detail.html", {'entry':vocab, 'text':text,  'furigana':furigana,  'definition':definition, 'definition2':definition2})
+
+# Returns vocabulary details based on ID (TODO: use seqid)
+def vocab_stats_detail(request, vocab_id):
+    # Redirect to Homepage if user is not signed in
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/account/login/')
+    vocab  = get_vocab_by_id(vocab_id)
+    text = vocab.get_text()
+    furigana = vocab.get_furigana()
+    #Get definitions:
+    definition = vocab.get_definition(0)
+    definition2 = vocab.get_definition(1)
+    #get existing stats or create new ones
+    vocabstats  = get_vocab_stats(request.user, vocab)
+    return render(request, "languagebits/vocab/detail.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'definition':definition, 'definition2':definition2, "vocabstats":vocabstats, 'next':"/language/vocab/random_stats_view/"})
+
+# Returns vocabulary details based on ID (TODO: use seqid)
+def check_def_answer(request, vocab_id):
+    # Redirect to Homepage if user is not signed in
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/account/login/')
+    vocab  = get_vocab_by_id(vocab_id)
+    text = vocab.get_text()
+    furigana = vocab.get_furigana()
+    #Get definitions:
+    definition = vocab.get_definition(0)
+    definition2 = vocab.get_definition(1)
+    #get existing stats or create new ones
+    vocabstats  = get_vocab_stats(request.user, vocab)
+
+    answer_definition = request.GET.get('definition', False)
+
+    if answer_definition != False:
+        if answer_definition == definition or answer_definition == definition2:
+            vocabstats.quiz_def_correct()
+            print("CORRECT DEFINITION: %s Times Quized: %s Score: %s" % (answer_definition, vocabstats.times_quized,  vocabstats.definition_score))
+            return JsonResponse({"success": True, "result":True, "score":vocabstats.definition_score, "times_quized":vocabstats.times_quized})
+        else:
+            vocabstats.quiz_def_incorrect()
+            print("X WRONG X DEFINITION: %s Times Quized: %s Score: %s" % (answer_definition, vocabstats.times_quized,  vocabstats.definition_score))
+            return JsonResponse({"success": True, "result":False, "score":vocabstats.definition_score+1, "times_quized":vocabstats.times_quized})
+    else:
+            return JsonResponse({"success": False, "result":False})
+    #return render(request, "languagebits/vocab/detail.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'definition':definition, 'definition2':definition2, "vocabstats":vocabstats, 'next':"/language/vocab/random_stats_view/"})
+
+# Returns vocabulary details based on ID (TODO: use seqid)
+def check_fur_answer(request, vocab_id):
+    # Redirect to Homepage if user is not signed in
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/account/login/')
+
+    vocab  = get_vocab_by_id(vocab_id)
+    text = vocab.get_text()
+    furigana = vocab.get_furigana()
+    #get existing stats or create new ones
+    vocabstats  = get_vocab_stats(request.user, vocab)
+
+    answer_furigana = request.GET.get('furigana', False)
+
+    if answer_furigana != False:
+        if answer_furigana == furigana:
+            vocabstats.quiz_fur_correct()
+            print("CORRECT FURIGANA: %s Times Quized: %s Furigana Score: %s" % (answer_furigana, vocabstats.times_quized,  vocabstats.furigana_score))
+            return JsonResponse({"success": True, "result":True, "furigana_score":vocabstats.furigana_score, "times_quized":vocabstats.times_quized})
+        else:
+            vocabstats.quiz_fur_incorrect()
+            print("X INCORRECT * FURIGANA: %s Times Quized: %s Furigana Score: %s" % (answer_furigana, vocabstats.times_quized,  vocabstats.furigana_score))
+            return JsonResponse({"success": True, "result":False, "furigana_score":vocabstats.furigana_score, "times_quized":vocabstats.times_quized})
+    else:
+            return JsonResponse({"success": False, "result":False})
 
 # Returns a random vocabulary/verb/or grammar pattern which the users hould be studying
 def flashcards(request):
@@ -58,6 +129,25 @@ def flashcards(request):
     definition2 = vocab.get_definition(1)
 
     return render(request, "languagebits/vocab/detail.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'definition':definition, 'definition2':definition2})
+
+
+# Returns a random vocabulary/verb/or grammar pattern which the users hould be studying
+def random_stats_view(request):
+    # Redirect to Homepage if user is not signed in
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/account/login/')
+    vocab  = get_random_vocab()
+    text = vocab.get_text()
+    furigana = vocab.get_furigana()
+    #Get definitions:
+    definition = vocab.get_definition(0)
+    definition2 = vocab.get_definition(1)
+    #get existing stats or create new ones
+    vocabstats  = get_vocab_stats(request.user, vocab)
+    return render(request, "languagebits/vocab/detail.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'definition':definition, 'definition2':definition2, "vocabstats":vocabstats, 'next':"/language/vocab/random_stats_view/"})
+    #return render(request, "languagebits/vocab/detail.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'definition':definition, 'definition2':definition2})
+
+
 
 
 # Returns a random vocabulary definition quiz
@@ -88,6 +178,37 @@ def furigana_quiz(request):
     furigana2 = scramble_furigana(furigana)
 
     return render(request, "languagebits/vocab/furigana_quiz.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'definition':definition, 'furigana2':furigana2})
+
+def long_term_memory(request):
+    # Redirect to Homepage if user is not signed in
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/account/login/?next=/language/vocab/long_term_memory/')
+
+    memory = get_long_term_mem(request.user)
+    vocabstats_set = memory.vocabstats_set.all()
+    print("MID TERM MEMORY : %s" % vocabstats_set)
+    return render(request, "languagebits/vocab/memory_detail.html", {'vocabstats_set':vocabstats_set})
+
+def mid_term_memory(request):
+    # Redirect to Homepage if user is not signed in
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/account/login/?next=/language/vocab/mid_term_memory/')
+
+    memory = get_mid_term_mem(request.user)
+    vocabstats_set = memory.vocabstats_set.all()
+    print("MID TERM MEMORY : %s" % vocabstats_set)
+    return render(request, "languagebits/vocab/memory_detail.html", {'vocabstats_set':vocabstats_set})
+
+def short_term_memory(request):
+    # Redirect to Homepage if user is not signed in
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/account/login/?next=/language/vocab/short_term_memory/')
+
+    memory = get_short_term_mem(request.user)
+    vocabstats_set = memory.vocabstats_set.all()
+    print("SHORT TERM MEMORY : %s" % vocabstats_set)
+    return render(request, "languagebits/vocab/memory_detail.html", {'vocabstats_set':vocabstats_set})
+
 
 def practice(request):
     # Redirect to Homepage if user is not signed in

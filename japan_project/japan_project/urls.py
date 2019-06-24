@@ -22,10 +22,11 @@ from . import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^account/', include('allauth.urls')),
+    url(r'^userinfo/', include('userinfo.urls')),
     url(r'^payments/', include('payments.urls')),
     url(r'^premium/', include('premiumaccount.urls')),
     url(r'^teacher/', include('teacher.urls')),
-    url(r'^userinfo/', include('userinfo.urls')),
+    url(r'^videos/', include('videos.urls')),
     url(r'^dictionary/', include('dictionary.urls')),
     url(r'^language/', include('languagebits.urls')),
     url(r'^search/', include('haystack.urls')),
