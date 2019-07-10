@@ -1,6 +1,7 @@
 import scrapy
 import re
 import xml.etree.ElementTree as metree
+import random
 
 class BlogSpider(scrapy.Spider):
     rate = 1
@@ -16,10 +17,12 @@ class BlogSpider(scrapy.Spider):
     name = 'wikipedia'
     allowed_domains = ['ja.wikipedia.org']
     start_urls = ['https://ja.wikipedia.org']
-    MAX_PAGES = 25
+    MAX_PAGES = 50000
+    NEXT_PAGE_PROB = 70
+    BREAKPOINT = 500 #for graphing purposes
 
     SENTENCE_MIN = 14
-    SENTENCE_MAX = 35
+    SENTENCE_MAX = 40
 
     vocab_x = []
 
@@ -86,6 +89,8 @@ class BlogSpider(scrapy.Spider):
 
         #for header3 in response.css('h3'):
         #    yield {'h3': header3.css('h3::text').get()}
+        if self.pagenum % self.BREAKPOINT == 0:
+            self.file_h.write("-----------------------------------PAGE: %s-----------------------------------\n" % self.pagenum)
 
         if self.enable_images > 0 :
             images = response.css('img').xpath('@src').getall()
@@ -102,6 +107,7 @@ class BlogSpider(scrapy.Spider):
             #1.clean out href from paragraph, <p> </p>
             clean_p = re.sub(re_tag, '', p)
             sentences = clean_p.split("。")
+
 
             #clean_p = self.clean_html(p)
             #2. Grab a sentence 
@@ -129,8 +135,9 @@ class BlogSpider(scrapy.Spider):
                                 furigana_score = furigana_score + furigana_count
                                 furiganas.append(furigana)
 
-                        if (kanji_count + furigana_count) > 0:
-                            sentence_score = sentence_score + kanji_count + furigana_count
+                        #TODO: furignaa count is tricky for wors with short furigana
+                        if (kanji_count ) > 0:
+                            sentence_score = sentence_score + 1
                             #update vocab entry score
                             self.vocab_x[k] =  [num, seq, kanji, furigana, kanji_score, furigana_score]
                         
@@ -141,8 +148,11 @@ class BlogSpider(scrapy.Spider):
                         self.file_h.write(str(sentence_score))
                         self.file_h.write(": ")
                         self.file_h.write(sentence)
-                        self.file_h.write(" || K: ")
-                        self.file_h.write("".join(kanjis))
+                        self.file_h.write(" || Kanjis: ")
+                        self.file_h.write("[ ")
+                        for ki in kanjis:
+                            self.file_h.write("%s , " % ki) 
+                        self.file_h.write(" ]")
                         #self.file_h.write(" F: ")
                         #self.file_h.write("".join(furiganas))
                         self.file_h.write(" ||\n")
@@ -165,12 +175,28 @@ class BlogSpider(scrapy.Spider):
                 for k, entry in enumerate(self.vocab_x, start=0):
                     num, seq, kanji, furigana, kanji_score, furigana_score = entry
                     if kanji_score > 0 :
-                        score_file_h.write("".join(entry))
+                        s = "Entry:%s [%s] [%s] 	Kanji Score: %s		Furigana Score: %s \n" % (seq, kanji, furigana, kanji_score, furigana_score)
+                        score_file_h.write(s)
+
+            #Dump a copy every 500 pages
+            if self.pagenum % self.BREAKPOINT == 0 : 
+                mod500_filename = "vocab_filename_%s.txt" % self.pagenum
+                score_file_h = open(mod500_filename, "w") #always append to file
+                #Dump out all entries and scores
+                for k, entry in enumerate(self.vocab_x, start=0):
+                    num, seq, kanji, furigana, kanji_score, furigana_score = entry
+                    s = "%s, %s, %s, %s, %s\n" % (seq, kanji, furigana, kanji_score, furigana_score)
+                    score_file_h.write(s)
+                #Close file
+                score_file_h.close()
                     
 
         # Follow a mximum of 50 pages
         if self.pagenum < self.MAX_PAGES :
             for next_page in response.css('a.mw-redirect'):
-                yield response.follow(next_page, self.parse)
+                #only follow a random pagge
+                rand_num = random.randint(0,100)
+                if rand_num < self.NEXT_PAGE_PROB:
+                    yield response.follow(next_page, self.parse)
 
 

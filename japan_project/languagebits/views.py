@@ -117,6 +117,14 @@ def check_fur_answer(request, vocab_id):
             return JsonResponse({"success": False, "result":False})
 
 # Returns a random vocabulary/verb/or grammar pattern which the users hould be studying
+def next_steps(request):
+    # Redirect to Homepage if user is not signed in
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/account/login/')
+
+    return render(request, "languagebits/vocab/next_steps.html")
+
+# Returns a random vocabulary/verb/or grammar pattern which the users hould be studying
 def flashcards(request):
     # Redirect to Homepage if user is not signed in
     if not request.user.is_authenticated():
@@ -163,7 +171,9 @@ def definition_quiz(request):
     definition2 = get_random_definition()
     definition3 = get_random_definition()
 
-    return render(request, "languagebits/vocab/definition_quiz.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'definition':definition, 'definition2':definition2, 'definition3':definition3})
+    #get existing stats or create new ones
+    vocabstats  = get_vocab_stats(request.user, vocab)
+    return render(request, "languagebits/vocab/definition_quiz.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'definition':definition, 'definition2':definition2, 'definition3':definition3, "vocabstats":vocabstats})
 
 # Returns a random furigana selection quiz
 def furigana_quiz(request):
@@ -177,7 +187,7 @@ def furigana_quiz(request):
     definition = vocab.get_definition(0) #definition is always correct answer
     furigana2 = scramble_furigana(furigana)
 
-    return render(request, "languagebits/vocab/furigana_quiz.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'definition':definition, 'furigana2':furigana2})
+    return render(request, "languagebits/vocab/furigana_quiz.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'definition':definition, 'furigana2':furigana2, "vocabstats":vocabstats})
 
 def long_term_memory(request):
     # Redirect to Homepage if user is not signed in
@@ -221,6 +231,9 @@ def practice(request):
     #Get definitions:
     definition = vocab.get_definition(0) #definition is always correct answer
 
+    #get existing stats or create new ones
+    vocabstats  = get_vocab_stats(request.user, vocab)
+
     is_vocab = 0
     is_def_quiz = 0
     is_fur_quiz = 0
@@ -238,12 +251,101 @@ def practice(request):
     if is_vocab == 1 :
         definition2 = vocab.get_definition(1)
 
-        return render(request, "languagebits/vocab/detail.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'definition':definition, 'definition2':definition2, 'next':"/language/vocab/practice/"})
+        return render(request, "languagebits/vocab/detail.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'definition':definition, 'definition2':definition2, "vocabstats":vocabstats, 'next':"/language/vocab/practice/"})
     elif is_def_quiz == 1:
         definition2 = get_random_definition()
         definition3 = get_random_definition()
 
-        return render(request, "languagebits/vocab/definition_quiz.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'definition':definition, 'definition2':definition2, 'definition3':definition3,  'next':"/language/vocab/practice/"})
+        return render(request, "languagebits/vocab/definition_quiz.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'definition':definition, 'definition2':definition2, 'definition3':definition3, "vocabstats":vocabstats,  'next':"/language/vocab/practice/"})
     else:
         furigana2 = scramble_furigana(furigana)
-        return render(request, "languagebits/vocab/furigana_quiz.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'definition':definition, 'furigana2':furigana2, 'next':"/language/vocab/practice/"})
+        return render(request, "languagebits/vocab/furigana_quiz.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'definition':definition, 'furigana2':furigana2, "vocabstats":vocabstats, 'next':"/language/vocab/practice/"})
+
+
+#Spaced repetition practice
+def spaced_practice(request):
+    # Redirect to Homepage if user is not signed in
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/account/login/?next=/language/vocab/spaced_practice/')
+
+    vocab = None
+    puser = request.user
+
+    DEF_QUIZ_PROB = 0
+    FUR_QUIZ_PROB = 0
+    mem_type = 0 #0:NEW 1:SHORT, 2:MID 3:LONG
+    #NOTE: DEF_QUIZ_PROB + FUR_QUIZ_PROB should add up to be < 100
+
+    while (vocab == None):
+        rand_num = random.randint(1,101)
+        #50% chance  get a new word to practice
+        if rand_num < 20:
+            memory = get_new_term_mem(puser)
+            vocab, vocabstats  = get_mem_random_vocab(puser, memory)
+            QUIZ_PROB = 0
+            FUR_QUIZ_PROB = 0
+            mem_type = 0
+        #30% chance  get a short term memory word  to practice
+        elif rand_num < 90:
+            memory = get_short_term_mem(puser)
+            vocab, vocabstats  = get_mem_random_vocab(puser, memory)
+            if vocabstats.times_read > 20 :
+                DEF_QUIZ_PROB = 61
+                FUR_QUIZ_PROB = 36
+            else:
+                DEF_QUIZ_PROB = 55
+                FUR_QUIZ_PROB = 35
+            mem_type = 1
+    #15% chance  get a mid term memory word  to practice
+        elif rand_num < 95:
+            memory = get_mid_term_mem(puser)
+            vocab, vocabstats  = get_mem_random_vocab(puser, memory)
+            DEF_QUIZ_PROB = 40
+            FUR_QUIZ_PROB = 30
+            mem_type = 2
+    #5% chance  get a mid term memory word  to practice
+        else:
+            memory = get_long_term_mem(puser)
+            vocab, vocabstats  = get_mem_random_vocab(puser, memory)
+            DEF_QUIZ_PROB = 50
+            FUR_QUIZ_PROB = 40
+            mem_type = 3
+
+    #if new_words < 10  add a random new word
+    #vocab  = get_random_vocab() TODO: add random vocab entry to memory
+
+    text = vocab.get_text()
+    furigana = vocab.get_furigana()
+    #Get definitions:
+    definition = vocab.get_definition(0) #definition is always correct answer
+
+    #get existing stats or create new ones
+    vocabstats  = get_vocab_stats(request.user, vocab)
+
+    is_vocab = 0
+    is_def_quiz = 0
+    is_fur_quiz = 0
+    rand_num = random.randint(1,101) 
+    rand_num2 = random.randint(1,101) 
+
+    if rand_num < DEF_QUIZ_PROB:
+        is_def_quiz = 1
+    elif rand_num2 < FUR_QUIZ_PROB:
+        is_fur_quiz = 1
+    else:
+        is_vocab = 1
+
+    if is_vocab == 1 :
+        definition2 = vocab.get_definition(1)
+
+        return render(request, "languagebits/vocab/detail_practice.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'mem_type':mem_type, 'definition':definition, 'definition2':definition2, "vocabstats":vocabstats, 'next':"/language/vocab/spaced_practice/"})
+    elif is_def_quiz == 1:
+        definition2 = get_random_definition()
+        definition3 = get_random_definition()
+
+        return render(request, "languagebits/vocab/definition_quiz.html", {'entry':vocab, 'text':text, 'furigana':furigana, 'mem_type':mem_type, 'definition':definition, 'definition2':definition2, 'definition3':definition3, "vocabstats":vocabstats,  'next':"/language/vocab/spaced_practice/"})
+    else:
+        furigana2 = scramble_furigana(furigana)
+        return render(request, "languagebits/vocab/furigana_quiz.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'mem_type':mem_type, 'definition':definition, 'furigana2':furigana2, "vocabstats":vocabstats, 'next':"/language/vocab/spaced_practice/"})
+
+

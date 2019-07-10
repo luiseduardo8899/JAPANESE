@@ -14,11 +14,13 @@ urlpatterns = [
     url(r'^vocab/check_def_answer/(?P<vocab_id>[0-9]+)/$', views.check_def_answer, name='check_def_answer'),
     url(r'^vocab/check_fur_answer/(?P<vocab_id>[0-9]+)/$', views.check_fur_answer, name='check_fur_answer'),
 
+    url(r'^vocab/next_steps/$', views.next_steps, name='next_steps'),
     url(r'^vocab/flashcards/$', views.flashcards, name='flashcards'),
     url(r'^vocab/random_stats_view/$', views.random_stats_view, name='random_stats_view'),
     url(r'^vocab/definition_quiz/$', views.definition_quiz, name='definition_quiz'),
     url(r'^vocab/furigana_quiz/$', views.furigana_quiz, name='furigana_quiz'),
     url(r'^vocab/practice/$', views.practice, name='practice'),
+    url(r'^vocab/spaced_practice/$', views.spaced_practice, name='spaced_practice'),
     url(r'^vocab/short_term_memory/$', views.short_term_memory, name='short_term_memory'),
     url(r'^vocab/mid_term_memory/$', views.mid_term_memory, name='mid_term_memory'),
     url(r'^vocab/long_term_memory/$', views.long_term_memory, name='long_term_memory'),

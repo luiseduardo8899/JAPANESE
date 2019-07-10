@@ -212,11 +212,11 @@ def get_vocab_stats(puser, vocab):
     times_read = vocabstats.times_read + 1
     vocabstats.times_read = times_read 
 
-    if vocabstats.times_read > 30:
+    if vocabstats.times_read > 30 and vocabstats.times_quized > 12:
         memory = get_long_term_mem(puser)
-    elif vocabstats.times_read > 20:
+    elif vocabstats.times_read > 20 and  vocabstats.times_quized > 6:
         memory = get_mid_term_mem(puser)
-    elif vocabstats.times_read > 5:
+    elif vocabstats.times_read > 3 :
         memory = get_short_term_mem(puser)
     else:
         memory = get_new_term_mem(puser)
@@ -238,6 +238,26 @@ def get_new_term_mem(puser):
         memory.mem_type = NEW_TERM
         memory.save()
     return memory
+
+def get_mem_random_vocab(puser, memory):
+    length = 0
+    vocab = None
+    vocabstats_set = None
+    vocabstats_set = memory.vocabstats_set.all()
+
+    if vocabstats_set != None :
+        length = len(vocabstats_set)
+
+    if length == 0 : 
+        vocabstats = None
+        vocab = None
+        return vocab, vocabstats
+    else: 
+        index = randint(0, length-1) 
+        vocabstats = vocabstats_set[index]
+        vocab = vocabstats.entry
+        return vocab, vocabstats
+
 
 def get_short_term_mem(puser):
     try:

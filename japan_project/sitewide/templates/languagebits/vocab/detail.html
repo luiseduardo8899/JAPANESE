@@ -68,7 +68,19 @@
         <div class="card-block" style="background-color:#f54e30;" >
         {% endif %}
         {% endif %}
+
+        {% if mem_type == 0 %}
+        <h6 style="color:light-blue">entry#:{{ entry.pk }} <span class="badge badge-pill badge-success">New!</span> </h6>
+        {% elif mem_type == 1 %}
+        <h6 style="color:light-blue">entry#:{{ entry.pk }} <span class="badge badge-pill badge-dark">short</span> </h6>
+        {% elif mem_type == 2 %}
+        <h6 style="color:light-blue">entry#:{{ entry.pk }} <span class="badge badge-pill badge-dark">mid</span> </h6>
+        {% elif mem_type == 3 %}
+        <h6 style="color:light-blue">entry#:{{ entry.pk }} <span class="badge badge-pill badge-dark">long</span> </h6>
+        {% else %}
         <h6 style="color:light-blue">entry#:{{ entry.pk }} </h6>
+        {% endif %}
+
         <!-- first kanji, is the main kanji -->
         {% if text %}
         <div class="flex-center" >

@@ -4,6 +4,7 @@ from django.utils import timezone
 import datetime
 
 #Integer definition of JLPT_N levels
+NON_JLPT = 6
 JLPT_N5 = 5
 JLPT_N4 = 4
 JLPT_N3 = 3
@@ -11,6 +12,7 @@ JLPT_N2 = 2
 JLPT_N1 = 1
 JLPT_N1P = 0 #More advanced than material covered in JLPT_N1
 JLPT_LEVELS = (
+    (NON_JLPT, "NON_JLPT"),
     (JLPT_N5, "JLPT_N5"),
     (JLPT_N4, "JLPT_N4"),
     (JLPT_N3, "JLPT_N3"),
@@ -194,7 +196,38 @@ class PatternItem(models.Model): #Can be POS or MODIFIER
         return "PatternItem#%s" % str(self.pk)+" "+self.text
 
     
-#TODO: -> Save and Load data from XML files.. TODO <-
+#Class LanguageModel ( based on entries ranking ) 
+#Load the model from a XML database
+class LanguageModel(models.Model): 
+    text = models.CharField(max_length=140, default="") #Name for the language Model: For example:  "Wikipedia_N2_Model"
+    notes = models.CharField(max_length=1024, default="") #Notes, include source where language model was creted from (i.e ja.wikipedia.org)
+    pub_date = models.DateTimeField('date published')
+    jlpt = models.IntegerField(choices=JLPT_LEVELS, default=5) #JLPT level for which the model corresponds.
+
+#Class VocabModel : model  of a specific vocab entry
+# Shows how often the word appears in vocabulary
+# Show relationship to other entries
+class VocabModel(models.Model): 
+    langmodel =  models.ForeignKey(LanguageModel)
+    entry = models.ForeignKey(Vocabulary) # After creating object,  use definition.add(<Vocabulary pointer>) #TODO: Make a base LangEntry Class?
+    rank =  models.IntegerField(default=0) #Rank within the LanguageModel 0-1000?
+    seqid = models.IntegerField(default=0) #same as vocab.seqid
+    text = models.CharField(max_length=140, default="") #same as vocab.text
+    furigana = models.CharField(max_length=140, default="") #same as vocab.furigana
+
+#Class VocabConnection:
+# Shows link strength between two Vocab entries  ( references VocabModel )
+class VocabConnection(models.Model): 
+    langmodel =  models.ForeignKey(LanguageModel)
+    entryA = models.ForeignKey(VocabModel, related_name='entryA') # After creating object,  use vocabconnection.add(<Vocabulary pointer>) 
+    seqidA = models.IntegerField(default=0) #same as vocab.seqid
+    entryB = models.ForeignKey(VocabModel, related_name='entryB') # After creating object,  use vocabconnection.add(<Vocabulary pointer>)
+    seqidB = models.IntegerField(default=0) #same as vocab.seqid
+    weight =  models.IntegerField(default=0) # Weight between entries, how close related are they ( 0 - 1000) How often they appear together in sentences/paragraphs? 
+
+
+
+
 
 #Class Vocabulary
 #Defines single Vocabulary entry, following JLPT N5-N1 lists...
