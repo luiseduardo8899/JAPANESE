@@ -1,0 +1,131 @@
+{% extends "account/base_dict.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block content %}
+<!-- FACEBOOk: JAVA-SDK-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.10&appId=512903775708770";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<!-- FACEBOOk: JAVA-SDK-->
+
+<!-- Start your project here-->
+<div class="row "> 
+{% for v in vocabstats_set %}
+
+{% if forloop.counter0|divisibleby:"6" %}
+</div>
+<div class="row " style="background:white"> 
+{% elif forloop.counter0|divisibleby:"3" %}
+</div>
+<div class="row " style="background:lightblue"> 
+{% endif %}
+
+<div class="col">
+<p>{{v.seqid}}</p>
+<h1>{{ v.entry.text }}</h1>
+<h2>{{ v.furigana }}</h2>
+<p>level: {{ v.entry.level }}</p>
+<p>times read: {{ v.times_read }}</p>
+<hr>
+</div>
+{% endfor %}
+
+</div>
+</div>
+
+<div style="height:19vh; background-color:pink">
+</div>
+
+<script>
+
+after_load();
+
+function after_load() {
+  setTimeout(read_the_title, 1000);
+};
+
+function read_the_title() {
+     window.speechSynthesis.cancel();
+    //Check SpeechRecognition and read the entry
+    if (!('webkitSpeechRecognition' in window)) {
+        alert("PLEASE UPGRADE YOUR WEB BROWSER OR USE LATEST CHROME BROWSER")
+    } else {
+     var voices = window.speechSynthesis.getVoices();
+     var u = new SpeechSynthesisUtterance();
+     var index = Math.floor( Math.random()*(voices.length) );
+     var o = window.speechSynthesis;
+
+     u.lang = 'en-US';
+     u.rate = 1.0;
+     u.pitch = 1.0; 
+     u.volume = 1.0; 
+     u.voice = voices[0];
+     u.text = 'Showing your Short term memory';
+
+     o.speak(u); 
+
+     }
+}
+
+// Tooltips Initialization
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
+windon.onload =   after_load;
+</script>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId            : '512903775708770',
+      autoLogAppEvents : true,
+      xfbml            : true,
+      version          : 'v2.10'
+    });
+    FB.AppEvents.logPageView();
+  }; 
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+  share_fb = function(){
+  FB.ui(
+   {
+    method: 'share',
+    href: 'luiseduardo8899.hopto.org{{request.get_full_path}}'
+  }, function(response){}); 
+  toastr.info('Sharing to facebook. Make sure you allow popups');
+  }
+
+  share_email = function(){
+    // Share to : /dictionary/{{entry.pk}}/send_email/luis.eduardo8899@gmail.com
+    myemail = document.getElementById('modal_email_id').value;
+    if( is_email(myemail) == true ) {
+      toastr.info('Sent entry to email : '+myemail);
+      $('#modal_email').modal('hide');
+    } else {
+      toastr.error('ERROR: emailed entered invalid: '+myemail);
+    }
+  }
+
+  function is_email(email){      
+    var emailReg = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    return emailReg.test(email); 
+  }
+
+</script>
+
+{% endblock %}
+
