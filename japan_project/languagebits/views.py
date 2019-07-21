@@ -349,3 +349,111 @@ def spaced_practice(request):
         return render(request, "languagebits/vocab/furigana_quiz.html", {'entry':vocab, 'text':text, 'furigana':furigana,  'mem_type':mem_type, 'definition':definition, 'furigana2':furigana2, "vocabstats":vocabstats, 'next':"/language/vocab/spaced_practice/"})
 
 
+#Spaced repetition practice 100
+def spaced_quiz_100(request):
+    # Redirect to Homepage if user is not signed in
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/account/login/?next=/language/vocab/spaced_practice/')
+
+
+    quiz_q = []
+
+    puser = request.user
+    user_stats = get_stats(puser)
+
+    DEF_QUIZ_PROB = 0
+    FUR_QUIZ_PROB = 0
+    mem_type = 0 #0:NEW 1:SHORT, 2:MID 3:LONG
+
+    #Collect up to N quizes
+    while ( len(quiz_q) < 5 ):
+        vocab = None
+        #NOTE: DEF_QUIZ_PROB + FUR_QUIZ_PROB should add up to be < 100
+        while (vocab == None):
+            rand_num = random.randint(1,101)
+            #90% chance  get a short term memory word  to practice
+            if rand_num < 90:
+                memory = get_short_term_mem(puser)
+                vocab, vocabstats  = get_mem_random_vocab(puser, memory)
+                if vocabstats.times_read > 20 :
+                    DEF_QUIZ_PROB = 61
+                    FUR_QUIZ_PROB = 36
+                else:
+                    DEF_QUIZ_PROB = 55
+                    FUR_QUIZ_PROB = 35
+                mem_type = 1
+        #15% chance  get a mid term memory word  to practice
+            elif rand_num < 95:
+                memory = get_mid_term_mem(puser)
+                vocab, vocabstats  = get_mem_random_vocab(puser, memory)
+                DEF_QUIZ_PROB = 40
+                FUR_QUIZ_PROB = 30
+                mem_type = 2
+        #5% chance  get a mid term memory word  to practice
+            else:
+                memory = get_long_term_mem(puser)
+                vocab, vocabstats  = get_mem_random_vocab(puser, memory)
+                DEF_QUIZ_PROB = 50
+                FUR_QUIZ_PROB = 40
+                mem_type = 3
+
+        #if new_words < 10  add a random new word
+        #vocab  = get_random_vocab() TODO: add random vocab entry to memory
+
+        text = vocab.get_text()
+        furigana = vocab.get_furigana()
+        #Get definitions:
+        definition = vocab.get_definition(0) #definition is always correct answer
+
+        #get existing stats or create new ones
+        vocab_stats  = get_vocab_stats(request.user, vocab)
+
+        is_vocab = 0
+        is_def_quiz = 0
+        is_fur_quiz = 0
+        rand_num = random.randint(1,101) 
+        rand_num2 = random.randint(1,101) 
+
+        if rand_num < DEF_QUIZ_PROB:
+            is_def_quiz = 1
+        elif rand_num2 < FUR_QUIZ_PROB:
+            is_fur_quiz = 1
+        else:
+            is_def_quiz = 1
+
+        if is_def_quiz == 1:
+            def_quiz = QuizObject()
+            definition2 = get_random_definition()
+            definition3 = get_random_definition()
+            #Form quiz object
+            def_quiz.vocab = vocab
+            def_quiz.vocab_stats = vocab_stats
+            def_quiz.seqid = vocab.seqid
+            def_quiz.text = text
+            def_quiz.furigana = furigana
+            def_quiz.is_def = True
+            def_quiz.mem_type = mem_type
+            def_quiz.option1 = definition 
+            def_quiz.option2 = definition2
+            def_quiz.option3 = definition3
+            quiz_q.append(def_quiz)
+            print("Added a definition quiz: %s" % def_quiz )
+
+        else:
+            fur_quiz = QuizObject()
+            furigana2 = scramble_furigana(furigana)
+            #Form quiz object
+            fur_quiz.vocab = vocab
+            fur_quiz.vocab_stats = vocab_stats
+            fur_quiz.seqid = vocab.seqid
+            fur_quiz.text = text
+            fur_quiz.furigana =  ""
+            fur_quiz.is_def = False
+            fur_quiz.mem_type = mem_type
+            fur_quiz.option1 = furigana 
+            fur_quiz.option2 = furigana2
+            quiz_q.append(fur_quiz)
+            print("Added a furigana quiz: %s" % fur_quiz )
+
+    return render(request, "languagebits/vocab/spaced_quiz_100.html", {'quiz_q':quiz_q,  'next':"/language/vocab/all_done_100"})
+

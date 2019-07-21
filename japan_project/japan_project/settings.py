@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'dictionary.apps.DictionaryConfig',
     'languagebits.apps.LanguagebitsConfig',
     'languagestats.apps.LanguagestatsConfig',
+    'languagelevels.apps.LanguagelevelsConfig',
     'videos.apps.VideosConfig',
     'django.contrib.admin',
     'django.contrib.auth',

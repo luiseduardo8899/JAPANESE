@@ -29,6 +29,95 @@ from pptx.enum.shapes import MSO_SHAPE
 from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
 
+pos_int_switch = {
+"TBD": 0,
+"ADJECTIVAL_NOUN": 1,
+"ADJECTIVE": 2,
+"ADJECTIVE_TARU": 3,
+"ADVERB": 4,
+"ADVERBIAL_NOUN": 5,
+"CONJUNCTION": 6,
+"COUNTER": 7, 
+"EXPRESSION": 8, 
+"FORMAL_NA_ADJECTIVE": 9, 
+"INTERJECTION": 10, 
+"NOUN": 11, 
+"NOUN_VERB_ACTING_PRENOMINALLY": 12, 
+"PREFIX": 13, 
+"PRE_NOUN_ADJECTIVAL": 14, 
+"PRONOUN": 15, 
+"SPECIAL": 16, 
+"SUFFIX": 17, 
+"TAKES_NO": 18, 
+"TAKES_SURU": 19, 
+"TAKES_TO": 20, 
+"TEMPORAl": 21, 
+"USED_AS_PREFIX": 22, 
+"USED_AS_SUFFIX": 23, 
+"VERB5_U": 24, 
+"VERB_1": 25, 
+"VERB_1_ZURU": 26, 
+"VERB_2_RU": 27, 
+"VERB_5_BU": 28, 
+"VERB_5_GU": 29, 
+"VERB_5_KU": 30, 
+"VERB_5_MU": 31, 
+"VERB_5_RU": 32, 
+"VERB_5_SU": 33, 
+"VERB_5_TSU": 34, 
+"VERB_ARCHAIC": 35, 
+"VERB_AUXILIARY": 36, 
+"VERB_INTRANSITIVE": 37, 
+"VERB_IRREGULAR": 38, 
+"VERB_RU": 39, 
+"VERB_SPECIAL": 40, 
+"VERB_SURU": 41, 
+"VERB_TRANSITIVE": 42}
+
+pos_text_switch = {
+"TBD": {"TBD : UNDEFINED"} ,
+"ADJECTIVAL_NOUN": {"adjectival nouns or quasi-adjectives (keiyodoshi)"} ,
+"ADJECTIVE": {"adjective (keiyoushi)"} ,
+"ADJECTIVE_TARU": {"`taru' adjective"} ,
+"ADVERB": {"adverb (fukushi)"}  ,
+"ADVERBIAL_NOUN": {"adverbial noun (fukushitekimeishi)"}  ,
+"CONJUNCTION": {"conjunction"} ,
+"COUNTER": {"counter"}  ,
+"EXPRESSION": {"expressions (phrases, clauses, etc.)"} ,
+"FORMAL_NA_ADJECTIVE": {"archaic/formal form of na-adjective"}  ,
+"INTERJECTION": {"interjection (kandoushi)"}  ,
+"NOUN": {"noun (common) (futsuumeishi)"}  ,
+"NOUN_VERB_ACTING_PRENOMINALLY": {"noun or verb acting prenominally"}    ,
+"PREFIX": {"prefix"} ,
+"PRE_NOUN_ADJECTIVAL": {"pre-noun adjectival (rentaishi)"}  ,
+"PRONOUN": {"pronoun"} ,
+"SPECIAL": {"Special class of the verb used"}  ,
+"SUFFIX": {"suffix"}  ,
+"TAKES_NO": {"nouns which may take the genitive case particle `no'"}  ,
+"TAKES_SURU": {"noun or participle which takes the aux. verb suru"}  ,
+"TAKES_TO": {"adverb taking the `to' particle"}  ,
+"TEMPORAl": {"noun (temporal) (jisoumeishi)"} ,
+"USED_AS_PREFIX": {"noun, used as a prefix"}  ,
+"USED_AS_SUFFIX": {"noun, used as a suffix"}  ,
+"VERB5_U": {"Godan verb with `u' ending"}  ,
+"VERB_1": {"Ichidan verb"}  ,
+"VERB_1_ZURU": {"Ichidan verb - zuru verb (alternative form of -jiru verbs)"}  ,
+"VERB_2_RU": {"Nidan verb (lower class) with `ru' ending (archaic)"}  ,
+"VERB_5_BU": {"Godan verb with `bu' ending"} ,
+"VERB_5_GU": {"Godan verb with `gu' ending"} ,
+"VERB_5_KU": {"Godan verb with `ku' ending"} ,
+"VERB_5_MU": {"Godan verb with `mu' ending"} ,
+"VERB_5_RU": {"Godan verb with `ru' ending"} ,
+"VERB_5_SU": {"Godan verb with `su' ending"}  ,
+"VERB_5_TSU": {"Godan verb with `tsu' ending"}  ,
+"VERB_ARCHAIC": {"Archaic form of the verb used"}  ,
+"VERB_AUXILIARY": {"auxiliary verb"}  ,
+"VERB_INTRANSITIVE": {"intransitive verb"}  ,
+"VERB_IRREGULAR": {"irregular form of the verb conjugation used"} ,
+"VERB_RU": {"irregular ru verb, plain form ends with -ri"} ,
+"VERB_SPECIAL": {"Special class of the verb used"}  ,
+"VERB_SURU": {"suru verb - special class"}  ,
+"VERB_TRANSITIVE": {"transitive verb"} }
 
 
 # Upload Vocabulary in XML format / Follow JMdict format
@@ -759,14 +848,50 @@ def process_vocab_xml_file(xml_file):
         number += 1
         #create the entry
         level_x = 0 #default level 0, level assigned in later processing
-        vocab = Vocabulary()
+
+        #Check if entry already exists
+        #Else
+        #get kanji and reading element, kanji element may be empty
+        kanji_set = entry_x.findall('kanji') # Kanji Element
+        furigana_set = entry_x.findall('furigana') # Reading Element ( furigana )
         ent_seq_set_x = entry_x.findall('ent_seq')
-        vocab.seqid = ent_seq_set_x[0].text
-        vocab.pub_date = datetime.datetime.now()
-        #Get JLPT Level and overall level of difficulty
+        dict_seq_set_x = entry_x.findall('dict_seq')
+        misc_set_x = entry_x.findall('misc')
         jlpt_set = entry_x.findall('jlpt') # Kanji Element
         level_set = entry_x.findall('level') # Reading Element ( furigana )
+        definition_set = entry_x.findall('definition') # Sense element
+        pos_set = entry_x.findall('pos') # Sense element
+
+        vocabs = Vocabulary.objects.all().filter(seqid = ent_seq_set_x[0].text)
+
+        if len(vocabs) > 0 and vocabs != None :
+            vocab = vocabs[0]
+        else :
+            vocab = Vocabulary()
+            vocab.seqid = ent_seq_set_x[0].text
+            vocab.pub_date = datetime.datetime.now()
+            if kanji_set[0].text == "" or kanji_set[0].text == None:
+                vocab.text = ""
+                vocab.furigana = furigana_set[0].text
+            else:
+                vocab.text = kanji_set[0].text
+                vocab.furigana = furigana_set[0].text
+            vocab.save()
+
+        vocab = vocabs[0]
+
+        #Update Kanji and Furigana
+        if kanji_set[0].text == "" or kanji_set[0].text == None:
+            vocab.text = ""
+            vocab.furigana = furigana_set[0].text
+        else:
+            vocab.text = kanji_set[0].text
+            vocab.furigana = furigana_set[0].text
+
+
+        #Get JLPT Level and overall level of difficulty
         vocab.jlpt = jlpt_set[0].text
+
         #If no level set, assign one arbitrarily
         if not level_set or level_set[0].text == "" or level_set[0].text == None:
             #TODO: For now increase level based on 5 entries per level
@@ -778,28 +903,56 @@ def process_vocab_xml_file(xml_file):
         else:
             vocab.level = level_set[0].text
 
-        #get kanji and reading element, kanji element may be empty
-        kanji_set = entry_x.findall('kanji') # Kanji Element
-        furigana_set = entry_x.findall('furigana') # Reading Element ( furigana )
-        if kanji_set[0].text == "" or kanji_set[0].text == None:
-            vocab.text = furigana_set[0].text
-        else:
-            vocab.text = kanji_set[0].text
-        vocab.furigana = furigana_set[0].text
+        #Add Romanji 
         roma = romkan.to_roma(furigana_set[0].text) # automatic convert to romanji
-        #TODO: POS processing, upload from JDICT XML
         vocab.romanji = roma
-        vocab.save()
 
         #get sense elements, these include tags and definitions
-        definition_set = entry_x.findall('definition') # Sense element
-        #add_keb(entry, k_ele_set)
-        #add_reb(entry, r_ele_set)
-        add_definition(vocab, definition_set)
-        #TODO: Add NOTES
-        #TODO: Add TAGS
+        #TODO: LUIS ENABLE definition add_definition(vocab, definition_set)
+        #add_definition(vocab, definition_set)
+        add_pos(vocab, pos_set)
+        #TODO: Add MISC / S_INF
+
+        misc_set = entry_x.findall('misc') # Sense element
+        for misc_x in misc_set :
+            if misc_x.text == "KANA_ALONE":
+                vocab.usu_kana = True
+
+        vocab.save()
         
     return list_of_entries # return the list of uploaded entries ( KEB/REB )
+
+#Add all Definition Elements found in the Vocabulary Entry
+def add_pos(entry, pos_set):
+    for pos_x in pos_set :
+        #check if Definition entry exists, and get a pointer
+        #.. for entry to be duplicate the text must be exactly the same
+        poss = PartOfSpeech.objects.all().filter(text = pos_x.text) 
+        if not poss : #create a new one and save
+            logger.info("IF DETECTED NO PRE EXISTING PartOfSpeech Objects %s " % poss)
+            pos1 = PartOfSpeech()
+            pos1.pos = pos_int_switch.get(pos_x.text)
+            pos1.text = pos_text_switch.get(pos_x.text)
+            pos1.save()
+            logger.info('ADDED NEW PARTOFSPEECH: %s %s' % (pos1.pos, pos1.text) )
+        else :
+            pos1 = poss[0]
+        if len(poss) > 1 : 
+            logger.warning('WARNING DUPLICATE PARTOFSPEECH OBJECTS: %s %s' % (pos1.pos, pos1.text)) 
+
+        #Make sure the POS entry does not already exist in the entry
+        entry_pos_set = entry.part_of_speech.all()
+        pos_already_set = 0
+        if len(entry_pos_set) > 0:
+            for entry_pos_x in entry_pos_set:
+                if entry_pos_x.pos == pos1.pos:
+                    pos_already_set = 1
+
+        if pos_already_set == 0:
+            entry.part_of_speech.add(pos1) # add entry pointer to list
+            entry.save()
+            pos1.save()
+        logger.info('FINISHED UPDATING PARTOFSPEECH: %s' % pos1.text)
 
 #Add all Definition Elements found in the Vocabulary Entry
 def add_definition(entry, def_set):

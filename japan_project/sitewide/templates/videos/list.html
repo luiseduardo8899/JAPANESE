@@ -1,0 +1,94 @@
+{% extends "account/base_dict.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block content %}
+
+<!-- FACEBOOk: JAVA-SDK-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.10&appId=512903775708770";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<!-- FACEBOOk: JAVA-SDK-->
+
+
+<!-- Start your project here-->
+{% for video in video_list %}
+<div  class="flex-center flex-row">
+<div class=" col-md-6">
+  <h3 class="h3-responsive">{{video.title}} </h3>
+  <h3>{{video.description}}</h3>
+<img width="240" height="160" src="{{video.img_url}}"></img>
+<div style="height:3vh; background-color:pink">
+</div>
+</div>
+</div>
+{% empty %}
+<div  class="flex-center flex-row">
+<div class=" col-md-6 text-center">
+  <h1 class="h1-responsive">Sorry, there are no videos in this list. Check back later. </h1>
+</div>
+</div>
+{% endfor %}
+
+
+
+<script>
+// Tooltips Initialization
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId            : '512903775708770',
+      autoLogAppEvents : true,
+      xfbml            : true,
+      version          : 'v2.10'
+    });
+    FB.AppEvents.logPageView();
+  }; 
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+  share_fb = function(){
+  FB.ui(
+   {
+    method: 'share',
+    href: 'luiseduardo8899.hopto.org{{request.get_full_path}}'
+  }, function(response){}); 
+  toastr.info('Sharing to facebook. Make sure you allow popups');
+  }
+
+  share_email = function(){
+    // Share to : /dictionary/{{entry.pk}}/send_email/luis.eduardo8899@gmail.com
+    myemail = document.getElementById('modal_email_id').value;
+    if( is_email(myemail) == true ) {
+      toastr.info('Sent entry to email : '+myemail);
+      $('#modal_email').modal('hide');
+    } else {
+      toastr.error('ERROR: emailed entered invalid: '+myemail);
+    }
+  }
+
+  function is_email(email){      
+    var emailReg = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    return emailReg.test(email); 
+  }
+
+</script>
+
+{% endblock %}
+

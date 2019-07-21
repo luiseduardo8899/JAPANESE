@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE GKvideos [
+<!ELEMENT GKvideos (video_entry*)>
+<!-- Voabu;ary Entries consist of ...  -->
+<!ELEMENT video_entry (ent_seq, title, ventry+, fentry+, url)>
+<!ELEMENT ent_seq (#PCDATA)>
+<!ELEMENT title (#PCDATA)>
+<!ELEMENT ventry (#PCDATA)>
+<!ELEMENT fentry (#PCDATA)>
+<!ELEMENT url (#PCDATA)>
+]>
+
+<GK_videos>
+<video_entry>
+<ent_seq>1</ent_seq>
+<title>[日本語の森] JLPT N2ことば#1</title>
+<ventry>相手</ventry>
+<ventry>決める</ventry>
+<ventry>最も</ventry>
+<ventry>合う</ventry>
+<ventry>睡眠</ventry>
+<ventry>方法</ventry>
+<ventry>昼寝</ventry>
+<ventry>訳</ventry>
+<fentry>によって</fentry>
+<ventry>適当</ventry>
+<ventry>行動</ventry>
+<ventry>効果的</ventry>
+<ventry>調査</ventry>
+<url>https://youtube.com/embed/f5_kzZD46AY</url>
+</video_entry>
+
+<video_entry>
+<ent_seq>2</ent_seq>
+<title>[日本語の森] JLPT N2ことば#2</title>
+<ventry>筆者</ventry>
+<fentry>なんて</fentry>
+<ventry>信じる</ventry>
+<ventry>商品</ventry>
+<ventry>購買</ventry>
+<ventry>理由</ventry>
+<ventry>発表</ventry>
+<ventry>叱る</ventry>
+<ventry>怒る</ventry>
+<url>https://youtube.com/embed/9ev1bMG8x74</url>
+</video_entry>
+
+<video_entry>
+<ent_seq>3</ent_seq>
+<title>[日本語の森] JLPT N2ことば#3</title>
+<ventry>活動</ventry>
+<ventry>内容</ventry>
+<ventry>企業</ventry>
+<fentry>グループ</fentry>
+<ventry>分かれる</ventry>
+<ventry>回答</ventry>
+<ventry>結果</ventry>
+<ventry>理解</ventry>
+<ventry>書類</ventry>
+<fentry>セット</fentry>
+<url>https://youtube.com/embed/-Yli8mH-LOE</url>
+</video_entry>
+
+<video_entry>
+<ent_seq>4</ent_seq>
+<title>[日本語の森] JLPT N2ことば#4 </title>
+<ventry>社員</ventry>
+<ventry>努力</ventry>
+<ventry>成功</ventry>
+<ventry>面白い</ventry>
+<ventry>感じる</ventry>
+<ventry>人間</ventry>
+<ventry>植物</ventry>
+<ventry>関係</ventry>
+<ventry>変化</ventry>
+<ventry>職業</ventry>
+<ventry>割合</ventry>
+<ventry>失業率</ventry>
+<url>https://youtube.com/embed/9C9wFMHdLrA</url>
+</video_entry>
+
+<video_entry>
+<ent_seq>5</ent_seq>
+<title>[日本語の森] JLPT N2ことば#5 </title>
+<fentry>につれて</fentry>
+<ventry>表現</ventry>
+<ventry>間違い</ventry>
+<ventry>数</ventry>
+<ventry>他人</ventry>
+<ventry>相談</ventry>
+<ventry>評価</ventry>
+<ventry>基準</ventry>
+<url>https://youtube.com/embed/cc-UCyxdnDY</url>
+</video_entry>
+
+<video_entry>
+<ent_seq>6</ent_seq>
+<title>[日本語の森] JLPT N2ことば#6 </title>
+<ventry>中学生</ventry>
+<ventry>初め</ventry>
+<ventry>頃</ventry>
+<ventry>友人</ventry>
+<ventry>覚える</ventry>
+<ventry>太陽</ventry>
+<ventry>昇る</ventry>
+<ventry>確認</ventry>
+<ventry>会話</ventry>
+<ventry>技術</ventry>
+<url>https://youtube.com/embed/Nf-qVSXt33I</url>
+</video_entry>
+
+<video_entry>
+<ent_seq>7</ent_seq>
+<title>[日本語の森] JLPT N2ことば#7 </title>
+<ventry>経済</ventry>
+<ventry>与える</ventry>
+<ventry>巨額</ventry>
+<ventry>税金</ventry>
+<ventry>悩む</ventry>
+<ventry>妻</ventry>
+<ventry>約</ventry>
+<ventry>釣り</ventry>
+<ventry>実際</ventry>
+<ventry>教育</ventry>
+<ventry>社会</ventry>
+<ventry>効果</ventry>
+<url>https://youtube.com/embed/aLVxgDk0kKs</url>
+</video_entry>
+
+<video_entry>
+<ent_seq>8</ent_seq>
+<title>[日本語の森] JLPT N2ことば#8 </title>
+<ventry>国民</ventry>
+<ventry>関心</ventry>
+<ventry>調べる</ventry>
+<fentry>メモ</fentry>
+<ventry>代</ventry>
+<ventry>将来</ventry>
+<ventry>人生</ventry>
+<ventry>目的</ventry>
+<ventry>健康</ventry>
+<ventry>学ぶ</ventry>
+<fentry>まね</fentry>
+<ventry>大事</ventry>
+<url>https://youtube.com/embed/gv-7Q23Fbyw</url>
+</video_entry>
+
+<video_entry>
+<ent_seq>9</ent_seq>
+<title>[日本語の森] JLPT N2ことば#9 </title>
+<ventry>能力</ventry>
+<ventry>日常</ventry>
+<ventry>初めて</ventry>
+<ventry>合わせる</ventry>
+<ventry>就職</ventry>
+<ventry>一生懸命</ventry>
+<ventry>礼儀</ventry>
+<ventry>身につける</ventry>
+<ventry>成長</ventry>
+<url>https://youtube.com/embed/8qKoskSBVGA</url>
+</video_entry>
+
+<video_entry>
+<ent_seq>10</ent_seq>
+<title>[日本語の森] JLPT N2ことば#10 </title>
+<fentry>ぶり</fentry>
+<fentry>ふるさと</fentry>
+<ventry>様子</ventry>
+<ventry>大声</ventry>
+<fentry>つまり</fentry>
+<ventry>迷惑</ventry>
+<ventry>袋</ventry>
+<ventry>郵便</ventry>
+<ventry>環境</ventry>
+<ventry>優勝</ventry>
+<url>https://youtube.com/embed/r-g1QsLMa2Y</url>
+</video_entry>
+
+</GK_videos>

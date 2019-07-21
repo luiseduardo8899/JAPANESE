@@ -1,5 +1,6 @@
 from languagebits.models import Kana, GrammarEntry, KanjiEntry, Vocabulary, LangDefinition
 from languagestats.models import *
+from userinfo.models import *
 from random import *
 import datetime
 from django.http import HttpResponseRedirect, HttpResponse
@@ -285,3 +286,16 @@ def get_long_term_mem(puser):
         memory.mem_type = LONG_TERM
         memory.save()
     return memory
+
+#Simple Quiz Object to populate
+class QuizObject:
+    vocab = None
+    vocab_stats = None
+    seq_id = 55555555
+    text = ""
+    furigana = ""
+    is_def = True
+    mem_type = ""
+    option1 = "" 
+    option2 = ""
+    option3 = ""

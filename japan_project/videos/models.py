@@ -3,6 +3,7 @@ from django.utils import timezone
 import datetime
 
 #Integer definition of JLPT_N levels
+NON_JLPT = 6
 JLPT_N5 = 5
 JLPT_N4 = 4
 JLPT_N3 = 3
@@ -10,6 +11,7 @@ JLPT_N2 = 2
 JLPT_N1 = 1
 JLPT_N1P = 0 #More advanced than material covered in JLPT_N1
 JLPT_LEVELS = (
+    (NON_JLPT, "NON_JLPT"),
     (JLPT_N5, "JLPT_N5"),
     (JLPT_N4, "JLPT_N4"),
     (JLPT_N3, "JLPT_N3"),
@@ -29,7 +31,7 @@ class Video(models.Model):
     description = models.CharField(max_length=500)  #Description of video entry
     likes  = models.IntegerField(default=0)
     pub_date = models.DateTimeField('date published')
-    jlptlevel = models.IntegerField(choices=JLPT_LEVELS, default=5)
+    jlpt = models.IntegerField(choices=JLPT_LEVELS, default=5)
     level = models.IntegerField(default=0) # Total of 1-1024
 
     def __str__(self):

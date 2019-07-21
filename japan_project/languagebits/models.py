@@ -44,17 +44,93 @@ G5_VERB = 2 #GO DAN Verb ...
 
 #Part of speech items used in Japanese Grammar
 TBD = 0
-NOUN = 1
-VERB = 2
-I_ADJ = 3
-NA_ADJ = 4
+ADJECTIVAL_NOUN = 1
+ADJECTIVE = 2
+ADJECTIVE_TARU = 3
+ADVERB = 4
+ADVERBIAL_NOUN = 5
+CONJUNCTION = 6
+COUNTER = 7,
+EXPRESSION = 8,
+FORMAL_NA_ADJECTIVE = 9,
+INTERJECTION = 10,
+NOUN = 11,
+NOUN_VERB_ACTING_PRENOMINALLY = 12,
+PREFIX = 13,
+PRE_NOUN_ADJECTIVAL = 14,
+PRONOUN = 15,
+SPECIAL = 16,
+SUFFIX = 17,
+TAKES_NO = 18,
+TAKES_SURU = 19,
+TAKES_TO = 20,
+TEMPORAl = 21,
+USED_AS_PREFIX = 22,
+USED_AS_SUFFIX = 23,
+VERB5_U = 24,
+VERB_1 = 25,
+VERB_1_ZURU = 26,
+VERB_2_RU = 27,
+VERB_5_BU = 28,
+VERB_5_GU = 29,
+VERB_5_KU = 30,
+VERB_5_MU = 31,
+VERB_5_RU = 32,
+VERB_5_SU = 33,
+VERB_5_TSU = 34,
+VERB_ARCHAIC = 35,
+VERB_AUXILIARY = 36,
+VERB_INTRANSITIVE = 37,
+VERB_IRREGULAR = 38,
+VERB_RU = 39,
+VERB_SPECIAL = 40,
+VERB_SURU = 41,
+VERB_TRANSITIVE = 42
 
 POS_ITEMS = (
-    (NOUN, "NOUN"),
-    (VERB, "VERB"),
-    (I_ADJ, "I_ADJ"),
-    (NA_ADJ, "NA_ADJ")
-    #TODO do full ist of vocabulary items...
+    (TBD, "TBD" ),
+    (ADJECTIVAL_NOUN, "ADJECTIVAL_NOUN"),
+    (ADJECTIVE, "ADJECTIVE"),
+    (ADJECTIVE_TARU, "ADJECTIVE_TARU"),
+    (ADVERB,  "ADVERB"),
+    (ADVERBIAL_NOUN,  "ADVERBIAL_NOUN"),
+    (CONJUNCTION,  "CONJUNCTION"),
+    (COUNTER,  "COUNTER"),
+    (EXPRESSION,  "EXPRESSION"),
+    (FORMAL_NA_ADJECTIVE,  "FORMAL_NA_ADJECTIVE"),
+    (INTERJECTION,  "INTERJECTION"),
+    (NOUN,  "NOUN"),
+    (NOUN_VERB_ACTING_PRENOMINALLY,  "NOUN_VERB_ACTING_PRENOMINALLY"),
+    (PREFIX,  "PREFIX"),
+    (PRE_NOUN_ADJECTIVAL,  "PRE_NOUN_ADJECTIVAL"),
+    (PRONOUN,  "PRONOUN"),
+    (SPECIAL,  "SPECIAL"),
+    (SUFFIX,  "SUFFIX"),
+    (TAKES_NO,  "TAKES_NO"),
+    (TAKES_SURU,  "TAKES_SURU"),
+    (TAKES_TO,  "TAKES_TO"),
+    (TEMPORAl,  "TEMPORAl"),
+    (USED_AS_PREFIX,  "USED_AS_PREFIX"),
+    (USED_AS_SUFFIX,  "USED_AS_SUFFIX"),
+    (VERB5_U,  "VERB5_U"),
+    (VERB_1,  "VERB_1"),
+    (VERB_1_ZURU,  "VERB_1_ZURU"),
+    (VERB_2_RU,  "VERB_2_RU"),
+    (VERB_5_BU,  "VERB_5_BU"),
+    (VERB_5_GU,  "VERB_5_GU"),
+    (VERB_5_KU,  "VERB_5_KU"),
+    (VERB_5_MU,  "VERB_5_MU"),
+    (VERB_5_RU,  "VERB_5_RU"),
+    (VERB_5_SU,  "VERB_5_SU"),
+    (VERB_5_TSU,  "VERB_5_TSU"),
+    (VERB_ARCHAIC,  "VERB_ARCHAIC"),
+    (VERB_AUXILIARY,  "VERB_AUXILIARY"),
+    (VERB_INTRANSITIVE,  "VERB_INTRANSITIVE"),
+    (VERB_IRREGULAR,  "VERB_IRREGULAR"),
+    (VERB_RU,  "VERB_RU"),
+    (VERB_SPECIAL,  "VERB_SPECIAL"),
+    (VERB_SURU,  "VERB_SURU"),
+    (VERB_TRANSITIVE,  "VERB_TRANSITIVE")
 )
 
 #Grammar Modifiers used in common Japanese Grammar Patterns
@@ -196,43 +272,34 @@ class PatternItem(models.Model): #Can be POS or MODIFIER
         return "PatternItem#%s" % str(self.pk)+" "+self.text
 
     
-#Class LanguageModel ( based on entries ranking ) 
-#Load the model from a XML database
-class LanguageModel(models.Model): 
-    text = models.CharField(max_length=140, default="") #Name for the language Model: For example:  "Wikipedia_N2_Model"
-    notes = models.CharField(max_length=1024, default="") #Notes, include source where language model was creted from (i.e ja.wikipedia.org)
-    pub_date = models.DateTimeField('date published')
-    jlpt = models.IntegerField(choices=JLPT_LEVELS, default=5) #JLPT level for which the model corresponds.
-
-#Class VocabModel : model  of a specific vocab entry
-# Shows how often the word appears in vocabulary
-# Show relationship to other entries
-class VocabModel(models.Model): 
-    langmodel =  models.ForeignKey(LanguageModel)
-    entry = models.ForeignKey(Vocabulary) # After creating object,  use definition.add(<Vocabulary pointer>) #TODO: Make a base LangEntry Class?
-    rank =  models.IntegerField(default=0) #Rank within the LanguageModel 0-1000?
-    seqid = models.IntegerField(default=0) #same as vocab.seqid
-    text = models.CharField(max_length=140, default="") #same as vocab.text
-    furigana = models.CharField(max_length=140, default="") #same as vocab.furigana
-
-#Class VocabConnection:
-# Shows link strength between two Vocab entries  ( references VocabModel )
-class VocabConnection(models.Model): 
-    langmodel =  models.ForeignKey(LanguageModel)
-    entryA = models.ForeignKey(VocabModel, related_name='entryA') # After creating object,  use vocabconnection.add(<Vocabulary pointer>) 
-    seqidA = models.IntegerField(default=0) #same as vocab.seqid
-    entryB = models.ForeignKey(VocabModel, related_name='entryB') # After creating object,  use vocabconnection.add(<Vocabulary pointer>)
-    seqidB = models.IntegerField(default=0) #same as vocab.seqid
-    weight =  models.IntegerField(default=0) # Weight between entries, how close related are they ( 0 - 1000) How often they appear together in sentences/paragraphs? 
 
 
+#Class PartOfSpeech
+class PartOfSpeech(models.Model): 
+    pos = models.IntegerField(choices=POS_ITEMS, default=TBD) #Part of Speech #DEPRECATE
+    text = models.CharField(max_length=500, default="") #Keb or Reb from Dictionary Entry  ( Kanji or combination of Kanji and Furigana )
+    jptext = models.CharField(max_length=500, default="") #Keb or Reb from Dictionary Entry  ( Kanji or combination of Kanji and Furigana )
 
+    def __str__(self):
+        return "PartOfSpeech: {0}".format(self.text)
 
+    def get_text(self):
+        if self.text == "":
+            return "Description no provided"
+        else:
+            return self.text
+
+    def get_jptext(self):
+        if self.jptext == "":
+            return "Description no provided"
+        else:
+            return self.jptext
 
 #Class Vocabulary
 #Defines single Vocabulary entry, following JLPT N5-N1 lists...
 class Vocabulary(models.Model): 
     seqid = models.IntegerField(default=0) #This has to match the JDICT entry ?
+    dict_seq = models.IntegerField(default=0) #JMDICT sequence number entry 
     pub_date = models.DateTimeField('date published')
     jlpt = models.IntegerField(choices=JLPT_LEVELS, default=5)
     level = models.IntegerField(default=0) # Total of 1-1024
@@ -240,7 +307,9 @@ class Vocabulary(models.Model):
     text = models.CharField(max_length=140, default="") #Keb or Reb from Dictionary Entry  ( Kanji or combination of Kanji and Furigana )
     furigana = models.CharField(max_length=140, default="")
     romanji = models.CharField(max_length=140, default="")
-    pos = models.IntegerField(choices=POS_ITEMS, default=TBD) #Part of Speech
+    pos = models.IntegerField(choices=POS_ITEMS, default=TBD) #Part of Speech #DEPRECATE
+    usu_kana = models.BooleanField(default = False)
+    part_of_speech = models.ManyToManyField(PartOfSpeech)
 
     def __str__(self):
         return "Vocabulary:{0} : {1}".format((self.text), (self.furigana))
@@ -296,3 +365,35 @@ class LangTag(models.Model):
     def __str__(self):
         return "Tag#%s" % self.pk
 #Class Verb
+
+
+
+#Class LanguageModel ( based on entries ranking ) 
+#Load the model from a XML database
+class LanguageModel(models.Model): 
+    text = models.CharField(max_length=140, default="") #Name for the language Model: For example:  "Wikipedia_N2_Model"
+    notes = models.CharField(max_length=1024, default="") #Notes, include source where language model was creted from (i.e ja.wikipedia.org)
+    pub_date = models.DateTimeField('date published')
+    jlpt = models.IntegerField(choices=JLPT_LEVELS, default=5) #JLPT level for which the model corresponds.
+
+#Class VocabModel : model  of a specific vocab entry
+# Shows how often the word appears in vocabulary
+# Show relationship to other entries
+class VocabModel(models.Model): 
+    langmodel =  models.ForeignKey(LanguageModel)
+    entry = models.ForeignKey(Vocabulary) # After creating object,  use definition.add(<Vocabulary pointer>) #TODO: Make a base LangEntry Class?
+    rank =  models.IntegerField(default=0) #Rank within the LanguageModel 0-1000?
+    seqid = models.IntegerField(default=0) #same as vocab.seqid
+    text = models.CharField(max_length=140, default="") #same as vocab.text
+    furigana = models.CharField(max_length=140, default="") #same as vocab.furigana
+
+#Class VocabConnection:
+# Shows link strength between two Vocab entries  ( references VocabModel )
+class VocabConnection(models.Model): 
+    langmodel =  models.ForeignKey(LanguageModel)
+    entryA = models.ForeignKey(VocabModel, related_name='entryA') # After creating object,  use vocabconnection.add(<Vocabulary pointer>) 
+    seqidA = models.IntegerField(default=0) #same as vocab.seqid
+    entryB = models.ForeignKey(VocabModel, related_name='entryB') # After creating object,  use vocabconnection.add(<Vocabulary pointer>)
+    seqidB = models.IntegerField(default=0) #same as vocab.seqid
+    weight =  models.IntegerField(default=0) # Weight between entries, how close related are they ( 0 - 1000) How often they appear together in sentences/paragraphs? 
+

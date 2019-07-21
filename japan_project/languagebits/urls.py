@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^vocab/furigana_quiz/$', views.furigana_quiz, name='furigana_quiz'),
     url(r'^vocab/practice/$', views.practice, name='practice'),
     url(r'^vocab/spaced_practice/$', views.spaced_practice, name='spaced_practice'),
+    url(r'^vocab/spaced_quiz_100/$', views.spaced_quiz_100, name='spaced_quiz_100'),
     url(r'^vocab/short_term_memory/$', views.short_term_memory, name='short_term_memory'),
     url(r'^vocab/mid_term_memory/$', views.mid_term_memory, name='mid_term_memory'),
     url(r'^vocab/long_term_memory/$', views.long_term_memory, name='long_term_memory'),
